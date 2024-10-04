@@ -1,0 +1,204 @@
+body,
+html {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.content {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    /* Set a max-width */
+    padding: 20px;
+    /* Optional: Add padding for spacing */
+    box-sizing: border-box;
+    /* Include padding in total width */
+    overflow: hidden;
+    /* Hide overflowing content */
+    overflow-x: auto;
+    /* Allow horizontal scrolling if needed */
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    /* Allow dynamic height */
+    overflow: hidden;
+    display: block;
+    /* Allow scrolling on smaller screens */
+
+}
+
+/* Optional: Style for table cells and headers */
+th,
+td {
+    padding: 10px;
+    /* Add padding inside cells */
+    text-align: left;
+    /* Align text in cells */
+    border: 1px solid #ddd;
+    /* Add a light border for visibility */
+}
+
+th {
+    background-color: #f2f2f2;
+    /* Light background for headers */
+}
+
+/* Optional: Adjustments for responsiveness */
+@media (max-width: 600px) {
+    table {
+        width: 100%;
+        /* Ensure full width on small screens */
+        display: block;
+        /* Allow scrolling */
+        overflow-x: auto;
+        /* Add horizontal scrolling if needed */
+    }
+}
+
+
+
+.form {
+    margin-top: 20px;
+    text-align: center;
+    /* Center the form elements */
+}
+
+#content {
+    width: 70%;
+}
+
+.form {
+    margin-top: 20px;
+    text-align: center;
+    /* Center align the form within its container */
+}
+
+.form form {
+    display: flex;
+    /* Use flexbox for inline layout */
+    flex-wrap: nowrap;
+    /* Prevent wrapping */
+    justify-content: center;
+    /* Center align items horizontally */
+    align-items: center;
+    /* Vertically center items */
+    gap: 5px;
+    /* Space between inputs */
+    flex-direction: row;
+    /* Ensure items are laid out in a row */
+    overflow-x: auto;
+    /* Allow horizontal scrolling if necessary */
+}
+
+.form form input {
+    padding: 8px;
+    /* Add padding inside the input fields */
+    flex: 1;
+    /* Allow inputs to grow equally */
+    min-width: 40px;
+    /* Minimum width for each input */
+    max-width: 80px;
+    /* Maximum width for each input */
+}
+
+.user-info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    width: 150px;
+    height: 150px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #007bff;
+    color: white;
+}
+
+footer p {
+    margin-bottom: 10px;
+}
+
+footer .footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+footer .footer-links li {
+    display: inline;
+    margin: 0 15px;
+}
+
+footer .footer-links a {
+    color: white;
+    text-decoration: none;
+}
+
+footer .footer-links a:hover {
+    text-decoration: underline;
+}
+
+.back-to-top {
+    display: block;
+    margin-top: 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.back-to-top:hover {
+    text-decoration: underline;
+}
+
+.pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination a {
+    padding: 8px 16px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+
+
+.table a:hover,
+.form .button:hover {
+    background-color: #0056b3;
+    /* Add a darker shade on hover */
+    color: #fff;
+    /* Change text color to white */
+}
