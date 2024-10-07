@@ -1,7 +1,6 @@
 from ..utils import create_default_admin
 from flask import Blueprint, jsonify
 from flask import send_file, Blueprint
-import openpyxl
 from openpyxl import load_workbook
 from flask import Blueprint, render_template
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
@@ -25,7 +24,6 @@ from flask import current_app
 from flask_login import login_required, current_user
 from flask import send_file
 from flask import Flask, render_template
-import openpyxl  # For .xlsx files
 
 
 bp = Blueprint('admin', __name__)
