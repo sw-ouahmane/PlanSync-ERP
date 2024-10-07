@@ -1,3 +1,5 @@
+from ..utils import create_default_admin
+from flask import Blueprint, jsonify
 from flask import send_file, Blueprint
 import openpyxl
 from openpyxl import load_workbook
@@ -23,11 +25,19 @@ from flask import current_app
 from flask_login import login_required, current_user
 from flask import send_file
 from flask import Flask, render_template
-import xlrd
 import openpyxl  # For .xlsx files
 
 
 bp = Blueprint('admin', __name__)
+
+
+@bp.route('/create-default-admin', methods=['POST'])
+def create_admin():
+    try:
+        create_default_admin()  # Call your function to create the default admin
+        return jsonify({"message": "Default admin created successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @bp.route('/admin')

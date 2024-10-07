@@ -1,11 +1,10 @@
+# app/__init__.py
 from flask import Flask
 from flask_login import LoginManager
 from .config import Config
 from .models import db
 from flask_migrate import Migrate
-from .utils import create_default_admin
 import os
-
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -41,15 +40,8 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # Create default admin
+    # Create all tables in the database
     with app.app_context():
-        # Be cautious with these lines in production
-        """
-
-        db.drop_all()
-        db.create_all()
-        """
-
-        create_default_admin()
+        db.create_all()  # Create the tables
 
     return app
