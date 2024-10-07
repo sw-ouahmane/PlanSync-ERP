@@ -25,3 +25,6 @@ SQLALCHEMY_DATABASE_URI = 'postgresql: // plansync_erp_l4ay_user: zL0sbPgekwRt7z
 # postgresql://plansync_erp_l4ay_user:zL0sbPgekwRt7zxBZDnjXYIaQImXkvpw@dpg-cs1ejq88fa8c73d01r9g-a.oregon-postgres.render.com/plansync_erp_l4ay
 
 # set DATABASE_URL=postgresql://plansync_erp_l4ay_user:zL0sbPgekwRt7zxBZDnjXYIaQImXkvpw@dpg-cs1ejq88fa8c73d01r9g-a.oregon-postgres.render.com/plansync_erp_l4ay?sslmode=require
+
+
+# postgresql://plansync_erp_l4ay_user:zL0sbPgekwRt7zxBZDnjXYIaQImXkvpw@dpg-cs1ejq88fa8c73d01r9g-a/plansync_erp_l4ay

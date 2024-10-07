@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from .config import Config
 from .models import db
 from flask_migrate import Migrate
+from .utils import create_default_admin
 import os
 
 # Initialize Flask-Login
@@ -43,5 +44,7 @@ def create_app():
     # Create all tables in the database
     with app.app_context():
         db.create_all()  # Create the tables
+
+        create_default_admin()
 
     return app
