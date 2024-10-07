@@ -87,6 +87,7 @@ urllib3==2.1.0
 #pip install vboxapi
 virtualenv==20.26.3
 Werkzeug==3.0.2
-windows-curses
+#windows-curses
+windows-curses==2.3.3 ; sys_platform == "win32"
 WTForms==3.1.2
 xlrd==2.0.1
