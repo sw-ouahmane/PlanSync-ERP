@@ -1,3 +1,6 @@
+from flask_login import current_user
+import calendar
+from collections import defaultdict
 from flask import request
 from flask_login import login_required, current_user
 from flask import Flask, render_template, url_for, request, redirect, session, flash
@@ -274,3 +277,27 @@ def add_escale(task_id):
         flash('Please enter a valid Escale.', 'danger')
 
     return redirect(url_for('tasks.view_user_tasks', user_id=task.user_id))
+
+
+@bp.route('/statistiques')
+@login_required  # Ensure the user is logged in
+def statistiques():
+    # Fetch validated todos only for the current user
+    validated_todos = Todo.query.filter_by(
+        status='Validated', user_id=current_user.id).all()
+
+    # Dictionary to store count of validated tasks by month
+    tasks_per_month = defaultdict(int)
+
+    # Loop through validated todos and count how many fall in each month
+    for todo in validated_todos:
+        if todo.date_created:  # Assuming `date_created` holds the task creation date
+            month = todo.date_created.month  # Extract the month from the creation date
+            tasks_per_month[month] += 1
+
+    # Convert to sorted list of month names and task counts
+    months = [calendar.month_name[i] for i in sorted(tasks_per_month)]
+    task_counts = [tasks_per_month[i] for i in sorted(tasks_per_month)]
+
+    # Pass the months and task counts to the template
+    return render_template('statistiques.html', months=months, task_counts=task_counts)

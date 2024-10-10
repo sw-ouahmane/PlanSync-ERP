@@ -65,5 +65,7 @@ class Todo(db.Model):
     remark = db.Column(db.String(255), nullable=True)
     Escale = db.Column(db.String(15), nullable=True)  # Make nullable
 
+    execution_time = db.Column(db.Float, nullable=True)
+
     def __repr__(self):
         return f'<Task {self.id}>'

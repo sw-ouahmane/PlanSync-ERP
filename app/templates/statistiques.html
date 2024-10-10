@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Statistiques</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    /* Set the maximum width and height for the chart */
+    #validatedTasksChart {
+        max-width: 500px;
+        /* Adjust this value for smaller width */
+        max-height: 300px;
+        /* Adjust this value for smaller height */
+        margin: 0 auto;
+        /* Center the chart */
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- Adjust the width and height directly -->
+<canvas id="validatedTasksChart" width="500" height="300"></canvas>
+
+<script>
+    var ctx = document.getElementById('validatedTasksChart').getContext('2d');
+
+    // Arrays to hold month names (X-axis) and task counts (Y-axis)
+    var chartLabels = {{ months | tojson | safe }};
+    var chartData = {{ task_counts | tojson | safe }};
+
+    console.log("Chart Labels (Months):", chartLabels);
+    console.log("Chart Data (Task Counts):", chartData);
+
+    // Create a bar chart using Chart.js
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Number of Validated Tasks',
+                data: chartData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true, /* Ensures responsiveness */
+            maintainAspectRatio: false, /* Allows control of width/height */
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
