@@ -1,0 +1,103 @@
+/* General page styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 960px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Page title */
+h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 30px;
+}
+
+/* Flex container for chart and table */
+.chart-table-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+
+/* Chart container */
+.chart-container {
+    flex: 1;
+    margin-right: 20px;
+    /* space between chart and table */
+}
+
+.table-container {
+    flex: 1;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: #007bff;
+    color: #fff;
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Chart styling */
+canvas {
+    display: block;
+    width: 100%;
+    max-height: 400px;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .chart-table-container {
+        flex-direction: column;
+        /* Stack vertically on smaller screens */
+    }
+
+    .chart-container,
+    .table-container {
+        margin-right: 0;
+        /* Remove margin for stacking */
+        margin-bottom: 20px;
+        /* Space between stacked items */
+    }
+}

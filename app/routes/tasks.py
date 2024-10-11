@@ -282,22 +282,65 @@ def add_escale(task_id):
 @bp.route('/statistiques')
 @login_required  # Ensure the user is logged in
 def statistiques():
-    # Fetch validated todos only for the current user
-    validated_todos = Todo.query.filter_by(
-        status='Validated', user_id=current_user.id).all()
+    # Get the selected filters from the form
+    month_filter = request.args.get('month')
+    year_filter = request.args.get('year')
+    escale_filter = request.args.get('Escale')
+    marchandise_filter = request.args.get('marchandise')
+    grue_filter = request.args.get('grue')
+
+    # Query validated tasks for the current user
+    query = Todo.query.filter_by(status='Validated', user_id=current_user.id)
+
+    # Apply filters if selected
+    if month_filter:
+        query = query.filter(db.extract(
+            'month', Todo.date_created) == month_filter)
+    if year_filter:
+        query = query.filter(db.extract(
+            'year', Todo.date_created) == year_filter)
+    if escale_filter:
+        query = query.filter_by(Escale=escale_filter)
+    if marchandise_filter:
+        query = query.filter_by(marchandise=marchandise_filter)
+    if grue_filter:
+        query = query.filter_by(grue=grue_filter)
+
+    # Get all validated tasks based on filters
+    validated_todos = query.all()
 
     # Dictionary to store count of validated tasks by month
     tasks_per_month = defaultdict(int)
 
-    # Loop through validated todos and count how many fall in each month
+    # Populate tasks_per_month with filtered data
     for todo in validated_todos:
-        if todo.date_created:  # Assuming `date_created` holds the task creation date
-            month = todo.date_created.month  # Extract the month from the creation date
+        if todo.date_created:
+            month = todo.date_created.month
             tasks_per_month[month] += 1
 
-    # Convert to sorted list of month names and task counts
+    # Sort and prepare data for display
     months = [calendar.month_name[i] for i in sorted(tasks_per_month)]
     task_counts = [tasks_per_month[i] for i in sorted(tasks_per_month)]
 
-    # Pass the months and task counts to the template
-    return render_template('statistiques.html', months=months, task_counts=task_counts)
+    # Fetch available years for year dropdown
+    available_years = sorted(set(
+        todo.date_created.year for todo in Todo.query.filter_by(user_id=current_user.id)))
+
+    # Fetch distinct values for the filters
+    available_escales = sorted(set(todo.Escale for todo in Todo.query.filter_by(
+        user_id=current_user.id) if todo.Escale))
+    available_marchandises = sorted(set(todo.marchandise for todo in Todo.query.filter_by(
+        user_id=current_user.id) if todo.marchandise))
+    available_grues = sorted(set(todo.grue for todo in Todo.query.filter_by(
+        user_id=current_user.id) if todo.grue))
+
+    # Pass month names and other data to the template
+    return render_template('statistiques.html',
+                           months=months,
+                           task_counts=task_counts,
+                           available_years=available_years,
+                           available_escales=available_escales,
+                           available_marchandises=available_marchandises,
+                           available_grues=available_grues,
+                           month_names=calendar.month_name,
+                           stats=zip(months, task_counts))

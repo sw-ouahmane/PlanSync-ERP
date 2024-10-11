@@ -1,4 +1,6 @@
-# Correct import for your function
+from flask_login import login_required
+from flask import render_template, request
+from flask import request, render_template
 from app.utils import get_active_sessions_count
 from app.models import User, Todo  # Adjust the import based on your app structure
 from flask import render_template, request, redirect, url_for
@@ -10,7 +12,6 @@ from flask import Blueprint, render_template
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
 from flask import send_file
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-import pandas as pd
 from flask import request, flash, redirect, url_for
 from app.models import db
 from app.models import Todo, User
@@ -21,25 +22,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from app.models import db, User, Todo
 import os
+import calendar
+import json
 from datetime import datetime
 from flask import Blueprint
-from flask import current_app
 from flask_login import login_required, current_user
 from flask import send_file
 from flask import Flask, render_template
+from collections import defaultdict
 
 
 bp = Blueprint('admin', __name__)
-
-"""
-@bp.route('/create-default-admin', methods=['POST'])
-def create_admin():
-    try:
-        create_default_admin()  # Call your function to create the default admin
-        return jsonify({"message": "Default admin created successfully!"}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-"""
 
 
 @bp.route('/admin')
@@ -297,15 +290,6 @@ def view_normal_users():
     )
 
 
-"""
-@bp.route('/uploads/<path:filename>')
-def uploaded_file(filename):
-    # This uses current_app.root_path to access the main app directory
-    uploads_directory = os.path.join(current_app.root_path, '..', 'uploads')
-    return send_from_directory(uploads_directory, filename)
-"""
-
-
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
 
 
@@ -394,3 +378,74 @@ def download_conference(filename):
             return "Error sending file", 500
     else:
         return "Unsupported file format", 400
+
+
+@bp.route('/statistiques_admin')
+@login_required
+def statistiques_admin():
+    # Get the selected filters from the form
+    month_filter = request.args.get('month')
+    year_filter = request.args.get('year')
+    shift_filter = request.args.get('shift')
+    Escale_filter = request.args.get('Escale')
+    marchandise_filter = request.args.get('marchandise')
+    grue_filter = request.args.get('grue')
+
+    # Query all validated tasks
+    query = Todo.query.filter_by(status='Validated')
+
+    # Apply filters if selected
+    if month_filter:
+        query = query.filter(db.extract(
+            'month', Todo.date_created) == month_filter)
+    if year_filter:
+        query = query.filter(db.extract(
+            'year', Todo.date_created) == year_filter)
+    if shift_filter:
+        query = query.filter_by(shift=shift_filter)
+    if Escale_filter:
+        query = query.filter_by(Escale=Escale_filter)
+    if marchandise_filter:
+        query = query.filter_by(marchandise=marchandise_filter)
+    if grue_filter:
+        query = query.filter_by(grue=grue_filter)
+
+    # Get all validated tasks based on filters
+    validated_todos = query.all()
+
+    # Dictionary to store count of validated tasks by month
+    tasks_per_month = defaultdict(int)
+
+    # Populate tasks_per_month with filtered data
+    for todo in validated_todos:
+        if todo.date_created:
+            month = todo.date_created.month
+            tasks_per_month[month] += 1
+
+    # Sort and prepare data for display
+    months = [calendar.month_name[i] for i in sorted(tasks_per_month)]
+    task_counts = [tasks_per_month[i] for i in sorted(tasks_per_month)]
+
+    # Fetch available years for year dropdown
+    available_years = sorted(
+        set(todo.date_created.year for todo in Todo.query.all()))
+
+    # Fetch distinct values for the filters
+    available_escales = sorted(
+        set(todo.Escale for todo in Todo.query.all() if todo.Escale))
+    available_marchandises = sorted(
+        set(todo.marchandise for todo in Todo.query.all() if todo.marchandise))
+    available_grues = sorted(
+        set(todo.grue for todo in Todo.query.all() if todo.grue))
+
+    # Pass month names and other data to the template
+    return render_template('admin/admin_statistiques.html',
+                           months=months,
+                           task_counts=task_counts,
+                           available_years=available_years,
+                           available_escales=available_escales,
+                           # Pass available Marchandise options
+                           available_marchandises=available_marchandises,
+                           available_grues=available_grues,  # Pass available Grue options
+                           month_names=calendar.month_name,
+                           stats=zip(months, task_counts))
