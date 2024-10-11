@@ -1,42 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+
+{% block head %}
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+{% endblock %}
 
-<body>
-    <h1>Admin Panel</h1>
+{% block body %}
+<h1>Admin Panel</h1>
 
-    <!-- Personalized welcome message -->
-    <h2>Welcome {{ current_user.username }} in your space!</h2>
+<!-- Personalized welcome message -->
+<h2>Welcome {{ current_user.username }} in your space!</h2>
 
-    <!-- Button to add a new admin (only visible to super admin) -->
-    {% if current_user.is_super_admin %}
-    <a href="{{ url_for('admin.add_admin') }}" class="btn btn-primary">Add New Admin</a>
-    <a href="{{ url_for('admin.view_admins') }}" class="btn btn-primary">View Admins</a>
-    {% endif %}
-
-    <!-- Admin Control Panel with buttons -->
-    <div class="admin-options">
-        <h3>Admin Control Panel</h3>
-        <a href="{{ url_for('admin.view_pending_users') }}" class="btn btn-primary">View Pending Users</a>
-        <a href="{{ url_for('admin.view_normal_users') }}" class="btn btn-primary">View Normal Users</a>
-        <a href="{{ url_for('admin.load_conference') }}" class="btn btn-primary">Load conference</a>
-        <a href="{{ url_for('admin.conference') }}" class="btn btn-primary">Open conference</a>
+<!-- Dashboard Section -->
+<div class="dashboard">
+    <div class="stat-card">
+        <h3>Total Users</h3>
+        <p>{{ total_users }}</p>
     </div>
+    <div class="stat-card">
+        <h3>Pending Approvals</h3>
+        <p>{{ pending_users|length }}</p> <!-- Counts the number of pending users -->
+    </div>
+    <div class="stat-card">
+        <h3>Active Sessions</h3>
+        <p>{{ active_sessions }}</p>
+    </div>
+</div>
 
 
-    <!-- Make sure the if block is closed here -->
+<!-- Sidebar Navigation -->
+<div class="sidebar">
+    <h3>Navigation</h3>
+    <ul>
+        <li><a href="{{ url_for('admin.view_pending_users') }}">Pending Users</a></li>
+        <li><a href="{{ url_for('admin.view_normal_users') }}">Normal Users</a></li>
+        <li><a href="{{ url_for('admin.load_conference') }}">Load Conference</a></li>
+        <li><a href="{{ url_for('admin.conference') }}">Open Conference</a></li>
+        {% if current_user.is_super_admin %}
+        <li><a href="{{ url_for('admin.add_admin') }}">Add New Admin</a></li>
+        <li><a href="{{ url_for('admin.view_admins') }}">View Admins</a></li>
+        {% endif %}
+    </ul>
+</div>
 
-    <!-- Button to log out -->
+<!-- Admin Control Panel with buttons -->
+<div class="admin-options">
+    <h3>Admin Control Panel</h3>
+    <a href="{{ url_for('admin.view_pending_users') }}" class="btn btn-primary">
+        <i class="fas fa-users"></i> View Pending Users
+    </a>
+    <a href="{{ url_for('admin.view_normal_users') }}" class="btn btn-primary">
+        <i class="fas fa-user-friends"></i> View Normal Users
+    </a>
+    <a href="{{ url_for('admin.load_conference') }}" class="btn btn-primary">
+        <i class="fas fa-upload"></i> Load Conference
+    </a>
+    <a href="{{ url_for('admin.conference') }}" class="btn btn-primary">
+        <i class="fas fa-folder-open"></i> Open Conference
+    </a>
+</div>
+
+<!-- Logout and Change Password buttons -->
+<div class="admin-action-buttons">
     <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
     <a href="{{ url_for('admin.admin_change_password') }}" class="btn btn-secondary">Change Password</a>
+</div>
 
-    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
-</body>
-
-</html>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

@@ -26,3 +26,9 @@ def create_default_admin():
             print("Admin user created successfully.")
         except Exception as e:
             print(f"There was an issue creating the admin user: {e}")
+
+
+def get_active_sessions_count():
+    # Placeholder logic for counting active sessions
+    # Replace with your actual logic
+    return 0  # This should return the count of currently active sessions

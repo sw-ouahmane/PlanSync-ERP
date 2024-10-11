@@ -1,12 +1,15 @@
+# Correct import for your function
+from app.utils import get_active_sessions_count
+from app.models import User, Todo  # Adjust the import based on your app structure
+from flask import render_template, request, redirect, url_for
 from ..utils import create_default_admin
 from flask import Blueprint, jsonify
 from flask import send_file, Blueprint
 from openpyxl import load_workbook
 from flask import Blueprint, render_template
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
-from flask import send_file, abort
+from flask import send_file
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from flask import send_from_directory, current_app
 import pandas as pd
 from flask import request, flash, redirect, url_for
 from app.models import db
@@ -28,7 +31,7 @@ from flask import Flask, render_template
 
 bp = Blueprint('admin', __name__)
 
-
+"""
 @bp.route('/create-default-admin', methods=['POST'])
 def create_admin():
     try:
@@ -36,6 +39,7 @@ def create_admin():
         return jsonify({"message": "Default admin created successfully!"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+"""
 
 
 @bp.route('/admin')
@@ -44,10 +48,14 @@ def admin():
     if not current_user.is_admin:
         return redirect(url_for('auth.login'))
 
+    # Fetch user statistics
+    total_users = User.query.count()  # Get total number of users
     pending_users = User.query.filter_by(
         is_admin=False, is_approved=False).all()
     normal_users = User.query.filter_by(is_admin=False, is_approved=True).all()
     admins = User.query.filter_by(is_admin=True).all()
+
+    active_sessions = get_active_sessions_count()  # Get active sessions count
 
     # Get search parameter
     prenom = request.args.get('prenom', '')
@@ -66,7 +74,13 @@ def admin():
     # Paginate the query
     tasks = query.paginate(page=page, per_page=per_page)
 
-    return render_template('admin/admin.html', pending_users=pending_users, normal_users=normal_users, admins=admins, tasks=tasks)
+    return render_template('admin/admin.html',
+                           total_users=total_users,
+                           pending_users=pending_users,
+                           normal_users=normal_users,
+                           admins=admins,
+                           active_sessions=active_sessions,
+                           tasks=tasks)
 
 
 @bp.route('/delete_user/<int:id>')
