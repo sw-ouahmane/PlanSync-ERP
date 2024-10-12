@@ -34,7 +34,8 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin: 0 auto 20px auto;
+    /* Center the table and add bottom margin */
 }
 
 th,
@@ -54,12 +55,20 @@ td {
 }
 
 /* Input Fields Styling */
-input[type="text"] {
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
 }
 
 input[type="submit"] {
@@ -92,6 +101,15 @@ a.button:hover {
     background-color: #0056b3;
 }
 
+/* Button Container Styling */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    /* Space between buttons */
+    margin-top: 10px;
+}
+
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     .content {
@@ -99,7 +117,13 @@ a.button:hover {
     }
 
     table,
-    input[type="submit"] {
+    input[type="submit"],
+    a.button {
         font-size: 14px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        gap: 5px;
     }
 }

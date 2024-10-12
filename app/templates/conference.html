@@ -38,7 +38,7 @@
 {% if current_user.is_authenticated and current_user.is_admin %}
 <a href="{{ url_for('admin.load_conference') }}" class="btn btn-secondary">Back to Upload</a>
 {% else %}
-<a href="{{ url_for('main.index') }}" class="btn btn-secondary">Back to Upload</a>
+<a href="{{ url_for('main.index') }}" class="btn btn-secondary">Back to Tasks</a>
 {% endif %}
 
 {% endblock %}

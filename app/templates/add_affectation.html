@@ -7,7 +7,7 @@
 
 {% block body %}
 <div class="content">
-    <h1 style="text-align: center">Add New Affectation</h1>
+    <h1>Add New Affectation</h1>
 
     <form action="{{ url_for('tasks.add_affectation') }}" method="POST">
         <table>
@@ -27,16 +27,16 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="text" name="date" placeholder="Date" required></td>
+                    <td><input type="date" name="date" required></td>
                     <td>
-                        <select name="shift">
+                        <select name="shift" required>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                         </select>
                     </td>
                     <td>
-                        <select name="poste">
+                        <select name="poste" required>
                             <option value="22">22</option>
                             <option value="23">23</option>
                             <option value="24">24</option>
@@ -53,7 +53,7 @@
                         </select>
                     </td>
                     <td>
-                        <select name="grue">
+                        <select name="grue" required>
                             <option value="M630001">M630001</option>
                             <option value="M630002">M630002</option>
                             <option value="G400001">G400001</option>
@@ -68,25 +68,26 @@
                             <option value="G380004">G380004</option>
                         </select>
                     </td>
-                    <td><input type="text" name="navire" placeholder="Navire"></td>
-                    <td><input type="text" name="marchandise" placeholder="Marchandise"></td>
-                    <td><input type="text" name="nb_cs_pcs" placeholder="Nb de cs / pcs"></td>
-                    <td><input type="text" name="unite" placeholder="Unité"></td>
+                    <td><input type="text" name="navire" placeholder="Navire" required></td>
+                    <td><input type="text" name="marchandise" placeholder="Marchandise" required></td>
+                    <td><input type="number" name="nb_cs_pcs" placeholder="Nb de cs / pcs" required></td>
+                    <td><input type="text" name="unite" placeholder="Unité" required></td>
                     <td>
-                        <select name="raclage">
+                        <select name="raclage" required>
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
                     </td>
-                    <td><input type="text" name="comentaire" placeholder="comentaire"></td>
-
+                    <td><textarea name="commentaire" placeholder="Commentaire" rows="3"></textarea></td>
                 </tr>
             </tbody>
         </table>
-        <input type="submit" value="Add Task">
+
+        <!-- Button Container -->
+        <div class="button-container">
+            <input type="submit" value="Add Task">
+            <a href="{{ url_for('main.index') }}" class="button">Back to Tasks</a>
+        </div>
     </form>
-
-
-    <p style="text-align: center"><a href="{{ url_for('main.index') }}" class="button">Back to Tasks</a></p>
 </div>
 {% endblock %}

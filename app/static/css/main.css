@@ -11,45 +11,48 @@ html {
 .content {
     margin: 0 auto;
     width: 100%;
-    max-width: 1200px;
-    /* Set a max-width */
+    max-width: 100%;
+    /* Center the content and set a max width */
     padding: 20px;
-    /* Optional: Add padding for spacing */
     box-sizing: border-box;
-    /* Include padding in total width */
-    overflow: hidden;
-    /* Hide overflowing content */
-    overflow-x: auto;
-    /* Allow horizontal scrolling if needed */
+    text-align: center;
+    /* Center content */
 }
 
 table {
     border-collapse: collapse;
-    margin: 0 auto;
     width: 100%;
+    /* Ensure the table takes full width of the page */
     max-width: 100%;
-    height: auto;
-    /* Allow dynamic height */
-    overflow: hidden;
-    display: block;
-    /* Allow scrolling on smaller screens */
-
+    /* Prevent the table from exceeding the width of the page */
 }
 
 /* Optional: Style for table cells and headers */
 th,
 td {
     padding: 10px;
-    /* Add padding inside cells */
-    text-align: left;
-    /* Align text in cells */
-    border: 1px solid #ddd;
-    /* Add a light border for visibility */
+    text-align: center;
+    /* Center table text */
+    white-space: nowrap;
+    /* Prevent line breaks */
 }
 
 th {
     background-color: #f2f2f2;
-    /* Light background for headers */
+}
+
+td {
+    min-width: 100px;
+    /* Adjust this width based on how wide you want the cells */
+    max-width: 200px;
+    /* Optional: Set a maximum width for cells */
+}
+
+table thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 1;
 }
 
 /* Optional: Adjustments for responsiveness */
