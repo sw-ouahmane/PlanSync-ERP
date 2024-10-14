@@ -5,40 +5,51 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    {% block head %} {% endblock %}
+    <!-- Bootstrap 4.5.2 CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    {% block head %}{% endblock %}
 </head>
 
 <body>
-    <!-- Conditional greeting message -->
-    {% if current_user.is_authenticated %}
-    {% if current_user.is_admin %}
-    <p>Welcome, admin!</p>
-    {% else %}
-    <p>Welcome, regular user!</p>
-    {% endif %}
-    {% else %}
-    <p>Welcome, guest!</p>
-    {% endif %}
+    <!-- Flex container to enable sticky footer -->
+    <div class="d-flex flex-column min-vh-100">
+        <!-- Optional: Header or Navbar -->
+        <header>
+            <div class="position-relative">
+                <!-- Add your image here -->
+                <img src="{{ url_for('static', filename='images/logoMM.PNG') }}" alt="Logo" class="top-right-image">
 
-    <!-- Main body content -->
-    {% block body %} {% endblock %}
+            </div>
+        </header>
 
-    <!-- Footer Section -->
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024 Tasks Management. All rights reserved.</p>
-            <ul class="footer-links">
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Contact Us</a></li>
-            </ul>
-            <a href="#" class="back-to-top">Back to Top</a>
-        </div>
-    </footer>
+        <!-- Main Content -->
+        <main class="flex-fill">
+            {% block body %}{% endblock %}
+        </main>
 
-    <!-- Optional: Add any footer-specific JS or external JS files here -->
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content text-center py-4 bg-primary text-white">
+                <p>&copy; 2024 Tasks Management. All rights reserved.</p>
+                <ul class="footer-links list-inline mb-2">
+                    <li class="list-inline-item"><a href="#" class="text-white">Privacy Policy</a></li>
+                    <li class="list-inline-item"><a href="#" class="text-white">Terms of Service</a></li>
+                    <li class="list-inline-item"><a href="#" class="text-white">Contact Us</a></li>
+                </ul>
+                <a href="#" class="back-to-top text-white">Back to Top</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap 4.5.2 JS Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 
 </html>
