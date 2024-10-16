@@ -6,44 +6,96 @@
 
 {% block body %}
 <div class="content">
-    <h1 style="text-align: center">Update Task</h1>
+    <h1 style="text-align: center; margin-bottom: 20px;">Update Task</h1>
 
-    <div class="form">
-        <form action="/update/{{ task.id }}" method="POST">
-            <table class="update-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Shift</th>
-                        <th>Poste</th>
-                        <th>Grue</th>
-                        <th>Navire</th>
-                        <th>Marchandise</th>
-                        <th>Nb de cs / pcs</th>
-                        <th>Unité</th>
-                        <th>Raclage</th>
-                        <th>Comentaire</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" name="date" value="{{ task.date }}"></td>
-                        <td><input type="text" name="shift" value="{{ task.shift }}"></td>
-                        <td><input type="text" name="poste" value="{{ task.poste }}"></td>
-                        <td><input type="text" name="grue" value="{{ task.grue }}"></td>
-                        <!-- Corrected from 'Grue' to 'grue' -->
-                        <td><input type="text" name="navire" value="{{ task.navire }}"></td>
-                        <td><input type="text" name="marchandise" value="{{ task.marchandise }}"></td>
-                        <td><input type="text" name="nb_cs_pcs" value="{{ task.nb_cs_pcs }}"></td>
-                        <td><input type="text" name="unite" value="{{ task.unite }}"></td>
-                        <td><input type="text" name="raclage" value="{{ task.raclage }}"></td>
-                        <td><input type="text" name="comentaire" value="{{ task.comentaire }}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <input type="submit" value="Update">
+    <div class="form-container">
+        <form action="/update/{{ task.id }}" method="POST" class="update-form">
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" name="date" id="date" value="{{ task.date_created.date() }}" required>
+
+                <label for="shift">Shift:</label>
+                <input type="text" name="shift" id="shift" value="{{ task.shift }}" required>
+
+                <label for="poste">Poste:</label>
+                <input type="text" name="poste" id="poste" value="{{ task.poste }}" required>
+
+                <label for="grue">Grue:</label>
+                <input type="text" name="grue" id="grue" value="{{ task.grue }}">
+
+                <label for="navire">Navire:</label>
+                <input type="text" name="navire" id="navire" value="{{ task.navire }}">
+
+                <label for="marchandise">Marchandise:</label>
+                <input type="text" name="marchandise" id="marchandise" value="{{ task.marchandise }}">
+
+                <label for="nb_cs_pcs">Nb de cs / pcs:</label>
+                <input type="text" name="nb_cs_pcs" id="nb_cs_pcs" value="{{ task.nb_cs_pcs }}">
+
+                <label for="unite">Unité:</label>
+                <input type="text" name="unite" id="unite" value="{{ task.unite }}">
+
+                <label for="raclage">Raclage:</label>
+                <input type="text" name="raclage" id="raclage" value="{{ task.raclage }}">
+
+                <label for="comentaire">Commentaire:</label>
+                <input type="text" name="comentaire" id="comentaire" value="{{ task.comentaire }}">
+            </div>
+
+            <div class="form-group" style="text-align: center; margin-top: 20px;">
+                <input type="submit" value="Update" class="submit-btn">
+            </div>
         </form>
-
     </div>
 </div>
+
+<style>
+    .content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .form-group label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        margin-right: 20px;
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .submit-btn {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .submit-btn:hover {
+        background-color: #218838;
+    }
+</style>
 {% endblock %}

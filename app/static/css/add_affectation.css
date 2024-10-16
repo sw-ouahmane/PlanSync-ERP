@@ -15,8 +15,9 @@ body {
 }
 
 .content {
-    max-width: 1300px;
-    margin: 0 auto;
+    max-width: 90%;
+    margin: 20px auto;
+    /* Add top margin here */
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
