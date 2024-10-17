@@ -20,18 +20,19 @@
     <p><strong>Phone:</strong> {{ user.phone }}</p>
     <p><strong>Matricule:</strong> {{ user.matricule }}</p>
     <p><strong>Shift:</strong> {{ user.shift }}</p>
-    <p><a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a></p>
-</div>
-{% endif %}
+    <p><a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
+        <a href="{{ url_for('auth.change_password') }}" class="btn btn-danger">Change Password</a>
+    </p>
+    {% endif %}
 
-<!-- Main Content -->
-<div class="content">
-    <h1 class="text-center">Task Master</h1>
+    <!-- Main Content -->
+    <div class="content">
+        <h1 class="text-center">Task Master</h1>
 
-    <div class="text-center mt-4">
-        <a href="{{ url_for('main.task_master') }}" class="btn btn-primary">Go to Task Master</a>
-        <a href="{{ url_for('admin.conference') }}" class="btn btn-primary">Conference</a>
-        <a href="{{ url_for('tasks.statistiques') }}" class="btn btn-primary">Statistiques</a>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.task_master') }}" class="btn btn-primary">Go to Task Master</a>
+            <a href="{{ url_for('admin.conference') }}" class="btn btn-primary">Conference</a>
+            <a href="{{ url_for('tasks.statistiques') }}" class="btn btn-primary">Statistiques</a>
+        </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

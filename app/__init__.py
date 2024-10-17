@@ -1,25 +1,31 @@
-# app/__init__.py
 from flask import Flask
 from flask_login import LoginManager
+from flask_mail import Mail  # Import Flask-Mail
 from .config import Config
 from .models import db
 from flask_migrate import Migrate
 from .utils import create_default_admin
 import os
-
 # Initialize Flask-Login
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'  # Ensure this matches your login route
+login_manager.login_view = 'auth.login'
+
+# Initialize Flask-Mail globally (but not tied to an app instance yet)
+mail = Mail()
 
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
 
+    print("Username:", os.environ.get('MAIL_USERNAME'))
+    print("Password:", os.environ.get('MAIL_PASSWORD'))
+
     # Initialize extensions
     db.init_app(app)
     migrate = Migrate(app, db)
     login_manager.init_app(app)
+    mail.init_app(app)  # Now associate `mail` with the Flask app
 
     # Register blueprints
     from .routes.auth import bp as auth_bp
@@ -43,9 +49,7 @@ def create_app():
 
     # Create all tables in the database
     with app.app_context():
-        # db.drop_all()
-        db.create_all()  # Create the tables
-
+        db.create_all()
         create_default_admin()
 
     return app
