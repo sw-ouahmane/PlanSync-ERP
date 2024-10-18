@@ -95,7 +95,8 @@ def add_affectation():
             user_id = current_user.id
 
             # Convert date string to datetime object
-            date_created = datetime.strptime(date_str, '%Y/%m/%d')
+            date_created = datetime.strptime(
+                date_str, '%Y-%m-%d')  # Corrected format
 
             # Create a new Todo object
             new_task = Todo(

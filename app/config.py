@@ -5,7 +5,6 @@ class Config:
     SECRET_KEY = os.environ.get(
         'f9b7e53d705071997a5da4d1b8513479') or 'you-will-never-guess'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    # or \ 'sqlite:///app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Set the upload folder path
@@ -19,6 +18,8 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
 
+    DEBUG = True
+
 
 # SQLALCHEMY_DATABASE_URI = 'postgresql: // plansync_erp_l4ay_user: zL0sbPgekwRt7zxBZDnjXYIaQImXkvpw@dpg-cs1ejq88fa8c73d01r9g-a.oregon-postgres.render.com/plansync_erp_l4ay'
 
@@ -30,3 +31,7 @@ class Config:
 # set MAIL_PASSWORD=hxur bbzh nswa twdo
 # set MAIL_DEFAULT_SENDER=infos.ouahmane@gmail.com
 # postgresql://plansync_erp_l4ay_user:zL0sbPgekwRt7zxBZDnjXYIaQImXkvpw@dpg-cs1ejq88fa8c73d01r9g-a/plansync_erp_l4ay
+
+
+# SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # or \ 'sqlite:///app.db'
