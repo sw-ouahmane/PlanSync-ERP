@@ -13,6 +13,7 @@
     {% if current_user.is_authenticated %}
     <p style="text-align: center">
         <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
+        <a href="{{ url_for('main.index') }}" class="btn btn-danger">Accueil</a>
     </p>
     {% endif %}
 
