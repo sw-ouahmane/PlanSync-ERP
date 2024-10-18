@@ -12,14 +12,15 @@ class Config:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    # This will be set in your environment
     MAIL_USERNAME = os.environ.get = 'infos.ouahmane@gmail.com'
+    # This will be set in your environment
     MAIL_PASSWORD = os.environ.get = 'hxur bbzh nswa twdo'
-    MAIL_DEFAULT_SENDER = MAIL_USERNAME
-
-    DEBUG = True
+    # This will be set in your environment
+    MAIL_DEFAULT_SENDER = os.environ.get('infos.ouahmane@gmail.com')
 
 
 # postgresql://plansync_erp_l4ay_user:zL0sbPgekwRt7zxBZDnjXYIaQImXkvpw@dpg-cs1ejq88fa8c73d01r9g-a.oregon-postgres.render.com/plansync_erp_l4ay
