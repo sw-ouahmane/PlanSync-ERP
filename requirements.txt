@@ -30,6 +30,7 @@ blinker==1.7.0
     # via
     #   -r requirements.in
     #   flask
+    #   flask-mail
 certifi==2023.11.17
     # via
     #   -r requirements.in
@@ -94,10 +95,13 @@ flask==3.0.3
     # via
     #   -r requirements.in
     #   flask-login
+    #   flask-mail
     #   flask-migrate
     #   flask-sqlalchemy
     #   flask-wtf
 flask-login==0.6.3
+    # via -r requirements.in
+flask-mail==0.9.1
     # via -r requirements.in
 flask-migrate==4.0.7
     # via -r requirements.in
