@@ -1,0 +1,97 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            /* adjust as necessary */
+            right: 10px;
+            /* adjust as necessary */
+            width: 100px;
+            /* or any desired width */
+            height: auto;
+            /* maintains aspect ratio */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="position-relative">
+        <img src="http://127.0.0.1:5000/static/images/logoMM.PNG" alt="Logo" class="logo">
+    </div>
+
+    <h1>Rapport des affectations de Mois {{ request.args.get('month') }}</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Shift</th>
+                <th>Poste</th>
+                <th>Grue</th>
+                <th>Navire</th>
+                <th>Marchandise</th>
+                <th>Nb de cs / pcs</th>
+                <th>Unité</th>
+                <th>Raclage</th>
+                <th>N D'Escale</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.date_created.date() }}</td>
+                <td>{{ task.shift }}</td>
+                <td>{{ task.poste }}</td>
+                <td>{{ task.grue }}</td>
+                <td>{{ task.navire }}</td>
+                <td>{{ task.marchandise }}</td>
+                <td>{{ task.nb_cs_pcs }}</td>
+                <td>{{ task.unite }}</td>
+                <td>{{ task.raclage }}</td>
+                <td>{{ task.Escale if task.Escale else 'Not yet' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+
+</html>

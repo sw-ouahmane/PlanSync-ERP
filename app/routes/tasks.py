@@ -3,14 +3,13 @@ import calendar
 from collections import defaultdict
 from flask import request
 from flask_login import login_required, current_user
-from flask import Flask, render_template, url_for, request, redirect, session, flash
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
+from flask import render_template, url_for, request, redirect, flash, send_file
 from app.models import db, User, Todo
 from flask_login import current_user, login_required
 from datetime import datetime
 from flask import Blueprint
-from flask import current_app
+import io
+from weasyprint import HTML
 
 
 bp = Blueprint('tasks', __name__)
@@ -345,3 +344,29 @@ def statistiques():
                            available_grues=available_grues,
                            month_names=calendar.month_name,
                            stats=zip(months, task_counts))
+
+
+@bp.route('/export', methods=['GET'])
+def export():
+    month = request.args.get('month')
+
+    if not month:
+        return redirect(url_for('tasks.task_master'))
+
+    # Fetch tasks for the selected month
+    tasks = Todo.query.filter(db.extract(
+        'month', Todo.date_created) == month).all()
+
+    # Render the report template (without the excluded fields)
+    html = render_template('export_template.html', tasks=tasks)
+
+    # Convert the HTML to PDF
+    pdf = HTML(string=html).write_pdf()
+
+    # Return the PDF as a downloadable file
+    return send_file(
+        io.BytesIO(pdf),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'Task_Report_Month_{month}.pdf'
+    )
