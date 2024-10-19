@@ -1,3 +1,4 @@
+from flask import request, render_template, send_file, redirect, url_for
 from flask_login import current_user
 import calendar
 from collections import defaultdict
@@ -351,7 +352,8 @@ def export():
     year = request.args.get('year', type=int)
     month = request.args.get('month', type=int)
 
-    if not month:
+    # Check if a month is selected, if not, redirect
+    if not month or not year:
         return redirect(url_for('tasks.task_master'))
 
     # Fetch tasks for the selected year and month
@@ -360,16 +362,16 @@ def export():
         db.extract('month', Todo.date_created) == month
     ).all()
 
-    # Render the report template (without the excluded fields)
+    # Render the report template
     html = render_template('export_template.html', tasks=tasks)
 
-    # Convert the HTML to PDF
-    pdf = HTML(string=html).write_pdf()
+    # Convert the HTML to PDF and include base_url for static file resolution
+    pdf = HTML(string=html, base_url=request.url_root).write_pdf()
 
     # Return the PDF as a downloadable file
     return send_file(
         io.BytesIO(pdf),
         mimetype='application/pdf',
         as_attachment=True,
-        download_name=f'Task_Report_Month_{month}.pdf'
+        download_name=f'Task_Report_Month_{month}_{year}.pdf'
     )
