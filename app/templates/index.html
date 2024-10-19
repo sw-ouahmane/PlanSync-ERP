@@ -19,6 +19,7 @@
     <p><strong>Email:</strong> {{ user.email }}</p>
     <p><strong>Phone:</strong> {{ user.phone }}</p>
     <p><strong>Matricule:</strong> {{ user.matricule }}</p>
+    <p><strong>Fonction:</strong> {{ user.fonction }}</p>
     <p><strong>Shift:</strong> {{ user.shift }}</p>
     <p><a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
         <a href="{{ url_for('auth.change_password') }}" class="btn btn-danger">Change Password</a>

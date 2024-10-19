@@ -1,99 +1,110 @@
 {% extends 'base.html' %}
 
-{% block body %}
+{% block head %}
+<title>Rapport</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
 
-<head>
-    <title>Rapport</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+    header {
+        position: relative;
+        height: 10px;
+        /* Adjust as needed */
+    }
 
-        .logo {
-            position: absolute;
-            top: 10px;
-            /* adjust as necessary */
-            right: 10px;
-            /* adjust as necessary */
-            width: 100px;
-            /* or any desired width */
-            height: auto;
-            /* maintains aspect ratio */
-        }
+    .top-right-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        /* Adjust as necessary */
+        height: auto;
+        margin: 10px;
+        /* Optional: adds space around the logo */
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
+    .user-info {
+        margin: 5px 0 20px;
 
-        table,
-        th,
-        td {
-            border: 1px solid black;
-        }
+    }
 
-        th,
-        td {
-            padding: 8px 12px;
-            text-align: left;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
 
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    th,
+    td {
+        padding: 8px 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
+{% if current_user.is_authenticated %}
+<div class="user-info">
+    <p><strong>Name:</strong> {{ current_user.username }}</p>
+    <p><strong>Fonction:</strong> {{ current_user.fonction }}</p>
+    <p><strong>Email:</strong> {{ current_user.email }}</p>
+    <p><strong>Matricule:</strong> {{ current_user.matricule }}</p>
+    <p><strong>Shift:</strong> {{ current_user.shift }}</p>
+</div>
+{% endif %}
+{% set month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+'September', 'October', 'November', 'December'] %}
 
-<body>
-    <div class="position-relative">
-        <img src="http://127.0.0.1:5000/static/images/logoMM.PNG" alt="Logo" class="logo">
-    </div>
+<h1>Rapport des affectations de Mois {{ month_names[request.args.get('month') | int - 1] }} Année {{
+    request.args.get('year') }}</h1>
 
-    <h1>Rapport des affectations de Mois {{ request.args.get('month') }}</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Shift</th>
-                <th>Poste</th>
-                <th>Grue</th>
-                <th>Navire</th>
-                <th>Marchandise</th>
-                <th>Nb de cs / pcs</th>
-                <th>Unité</th>
-                <th>Raclage</th>
-                <th>N D'Escale</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in tasks %}
-            <tr>
-                <td>{{ task.date_created.date() }}</td>
-                <td>{{ task.shift }}</td>
-                <td>{{ task.poste }}</td>
-                <td>{{ task.grue }}</td>
-                <td>{{ task.navire }}</td>
-                <td>{{ task.marchandise }}</td>
-                <td>{{ task.nb_cs_pcs }}</td>
-                <td>{{ task.unite }}</td>
-                <td>{{ task.raclage }}</td>
-                <td>{{ task.Escale if task.Escale else 'Not yet' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-</body>
-
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Shift</th>
+            <th>Poste</th>
+            <th>Grue</th>
+            <th>Navire</th>
+            <th>Marchandise</th>
+            <th>Nb de cs / pcs</th>
+            <th>Unité</th>
+            <th>Raclage</th>
+            <th>N D'Escale</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.date_created.date() }}</td>
+            <td>{{ task.shift }}</td>
+            <td>{{ task.poste }}</td>
+            <td>{{ task.grue }}</td>
+            <td>{{ task.navire }}</td>
+            <td>{{ task.marchandise }}</td>
+            <td>{{ task.nb_cs_pcs }}</td>
+            <td>{{ task.unite }}</td>
+            <td>{{ task.raclage }}</td>
+            <td>{{ task.Escale if task.Escale else 'Not yet' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

@@ -348,14 +348,17 @@ def statistiques():
 
 @bp.route('/export', methods=['GET'])
 def export():
-    month = request.args.get('month')
+    year = request.args.get('year', type=int)
+    month = request.args.get('month', type=int)
 
     if not month:
         return redirect(url_for('tasks.task_master'))
 
-    # Fetch tasks for the selected month
-    tasks = Todo.query.filter(db.extract(
-        'month', Todo.date_created) == month).all()
+    # Fetch tasks for the selected year and month
+    tasks = Todo.query.filter(
+        db.extract('year', Todo.date_created) == year,
+        db.extract('month', Todo.date_created) == month
+    ).all()
 
     # Render the report template (without the excluded fields)
     html = render_template('export_template.html', tasks=tasks)
