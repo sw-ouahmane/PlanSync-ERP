@@ -1,17 +1,16 @@
-import os
-from flask import current_app
 from flask_login import current_user
 import calendar
 from collections import defaultdict
 from flask import request
 from flask_login import login_required, current_user
-from flask import render_template, url_for, request, redirect, flash, send_file
+from flask import render_template, url_for, request, redirect, flash, send_file, current_app
 from app.models import db, User, Todo
 from flask_login import current_user, login_required
 from datetime import datetime
 from flask import Blueprint
 import io
 from weasyprint import HTML
+import os
 
 
 bp = Blueprint('tasks', __name__)
@@ -366,7 +365,7 @@ def export():
     html = render_template('export_template.html', tasks=tasks)
 
     # Convert the HTML to PDF
-    pdf = HTML(string=html, base_url=request.url_root).write_pdf()
+    pdf = HTML(string=html).write_pdf()
 
     # Return the PDF as a downloadable file
     return send_file(
