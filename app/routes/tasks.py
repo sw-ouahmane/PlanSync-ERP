@@ -362,7 +362,7 @@ def export():
     ).all()
 
     # Render the report template (without the excluded fields)
-    html = render_template('export_template.html', tasks=tasks)
+    html = render_template('export_template.html', tasks=tasks, is_pdf=True)
 
     # Convert the HTML to PDF
     pdf = HTML(string=html).write_pdf()

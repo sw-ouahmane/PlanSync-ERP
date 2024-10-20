@@ -18,11 +18,16 @@
         <!-- Optional: Header or Navbar -->
         <header>
             <div class="position-relative">
-                <!--<img src="{{ url_for('static', filename='images/logoMM.PNG') }}" alt="Logo" class="top-right-image">-->
-                <!--<img src="{{ request.url_root }}static/images/logoMM.PNG" alt="Logo" class="top-right-image">-->
+                {% if is_pdf %}
+                <!-- Use absolute file path for PDF -->
                 <img src="file:///opt/render/project/src/app/static/images/logoMM.PNG" alt="Logo"
                     class="top-right-image">
+                {% else %}
+                <!-- Use the normal URL routing for web pages -->
+                <img src="{{ url_for('static', filename='images/logoMM.PNG') }}" alt="Logo" class="top-right-image">
+                {% endif %}
             </div>
+
 
         </header>
 
