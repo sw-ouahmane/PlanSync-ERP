@@ -1,3 +1,5 @@
+import os
+from flask import current_app
 from flask_login import current_user
 import calendar
 from collections import defaultdict
@@ -373,3 +375,11 @@ def export():
         as_attachment=True,
         download_name=f'Task_Report_Month_{month}.pdf'
     )
+
+
+@bp.route('/get_logo_path', methods=['GET'])
+def get_logo_path():
+    # Get the absolute path for the logo image
+    logo_path = os.path.abspath(os.path.join(
+        current_app.root_path, 'static/images/logoMM.PNG'))
+    return f'The absolute path for the logo is: {logo_path}'
