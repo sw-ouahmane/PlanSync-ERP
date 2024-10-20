@@ -364,7 +364,7 @@ def export():
     html = render_template('export_template.html', tasks=tasks)
 
     # Convert the HTML to PDF
-    pdf = HTML(string=html).write_pdf()
+    pdf = HTML(string=html, base_url=request.url_root).write_pdf()
 
     # Return the PDF as a downloadable file
     return send_file(

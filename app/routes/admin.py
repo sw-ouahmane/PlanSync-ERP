@@ -449,3 +449,10 @@ def statistiques_admin():
                            available_grues=available_grues,  # Pass available Grue options
                            month_names=calendar.month_name,
                            stats=zip(months, task_counts))
+
+
+@bp.route('/saisai_conference')
+@login_required
+def saisai_conference():
+
+    return render_template('admin/saisai_conference.html', user=User)
