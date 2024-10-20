@@ -360,11 +360,11 @@ def export():
         db.extract('month', Todo.date_created) == month
     ).all()
 
-    # Render the report template
+    # Render the report template (without the excluded fields)
     html = render_template('export_template.html', tasks=tasks)
 
-    # Convert the HTML to PDF with base_url
-    pdf = HTML(string=html, base_url=request.url_root).write_pdf()
+    # Convert the HTML to PDF
+    pdf = HTML(string=html).write_pdf()
 
     # Return the PDF as a downloadable file
     return send_file(
