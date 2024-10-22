@@ -8,32 +8,41 @@
 {% block body %}
 <div class="content">
     <h1>saisai conference</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
 
-    <form action="{{ url_for('admin.saisai_conference') }}" method="POST">
-        <table>
+    <form action="{{ url_for('admin.saisai_conference') }}" method="POST" id="conferenceForm">
+        <table id="conferenceTable">
             <thead>
                 <tr>
                     <th>Poste</th>
                     <th>PM</th>
                     <th>Navire</th>
-                    <th>Nature</th>
+                    <th>Marchandise</th>
                     <th>Tonnage Manif</th>
                     <th>Tonnage Rest</th>
                     <th>Consignataire</th>
                     <th>Réceptionnaire</th>
                     <th>Grue</th>
                     <th>ELEVATEURS</th>
-                    <th>MAteriel a bord</th>
-                    <th>Date_debut_travail</th>
-                    <th>Date_fin_travail</th>
-                    <th>Heure_Terminaison Travail Prévue</th>
-                    <th>Obervation</th>
+                    <th>Materiel à bord</th>
+                    <th>Date Début Travail</th>
+                    <th>Date Fin Travail</th>
+                    <th>Heure Terminaison Travail Prévue</th>
+                    <th>Observation</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <select name="poste" required>
+                        <select name="poste[]" required>
                             <option value="22">22</option>
                             <option value="23">23</option>
                             <option value="24">24</option>
@@ -49,15 +58,15 @@
                             <option value="R4">R4</option>
                         </select>
                     </td>
-                    <td><input type="text" name="PM" required></td>
-                    <td><input type="text" name="Navire" required></td>
-                    <td><input type="text" name="Nature" required></td>
-                    <td><input type="number" name="Tonnage manif" required></td>
-                    <td><input type="number" name="Tonnage Rest" required></td>
-                    <td><input type="text" name="Consignataire" required></td>
-                    <td><input type="text" name="Réceptionnaire" required></td>
+                    <td><input type="text" name="pm[]"></td>
+                    <td><input type="text" name="navire[]"></td>
+                    <td><input type="text" name="marchandise[]" placeholder="Nature"></td>
+                    <td><input type="number" name="tonnage_manif[]"></td>
+                    <td><input type="number" name="tonnage_rest[]"></td>
+                    <td><input type="text" name="consignataire[]"></td>
+                    <td><input type="text" name="receptionnaire[]"></td>
                     <td>
-                        <select name="grue" required>
+                        <select name="grue[]">
                             <option value="M630001">M630001</option>
                             <option value="M630002">M630002</option>
                             <option value="G400001">G400001</option>
@@ -73,35 +82,101 @@
                         </select>
                     </td>
                     <td>
-                        <select name="ELEVATEURS" required>
+                        <select name="elevateur[]">
                             <option value="Elv1">1</option>
                             <option value="Elv2">2</option>
                             <option value="Elv3">3</option>
                         </select>
                     </td>
                     <td>
-                        <select name="MAteriel a bord" required>
+                        <select name="materiel_a_bord[]">
                             <option value="ch11">1</option>
                             <option value="ch2">2</option>
                             <option value="Sd1">3</option>
                         </select>
                     </td>
-                    <td><input type="date" name="Date_debut_travail" placeholder="Date_debut_travail" required></td>
-                    <td><input type="date" name="Date_fin_travail" placeholder="Date_fin_travail" required></td>
-                    <td><input type="text" name="Date_fin_travail" placeholder="Heure_Terminaison Travail Prévue"
-                            required></td>
-                    <td><input type="text" name="observation" placeholder="observation" required></td>
-
+                    <td><input type="date" name="Date_debut_travail[]"></td>
+                    <td><input type="date" name="Date_fin_travail[]"></td>
+                    <td><input type="text" name="Heure_Terminaison_Travail_Prévue[]" placeholder="Heure de terminaison">
+                    </td>
+                    <td><input type="text" name="observation[]" placeholder="Observation"></td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- Button Container 
         <div class="button-container">
-            <input type="submit" value="Add Task">
-            <a href="{{ url_for('main.task_master') }}" class="button">Back to Tasks</a>
+            <button type="button" id="addRow">Add another task</button>
+            <button type="submit" class="button">Add</button>
         </div>
-        -->
     </form>
 </div>
+
+<script>
+    document.getElementById('addRow').addEventListener('click', function () {
+        const tableBody = document.querySelector('#conferenceTable tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>
+                <select name="poste[]" required>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="T3T4">T3T4</option>
+                    <option value="36">36</option>
+                    <option value="35">35</option>
+                    <option value="34">34</option>
+                    <option value="33">33</option>
+                    <option value="32">32</option>
+                    <option value="31">31</option>
+                    <option value="30">30</option>
+                    <option value="R2">R2</option>
+                    <option value="R4">R4</option>
+                </select>
+            </td>
+            <td><input type="text" name="pm[]" ></td>
+            <td><input type="text" name="navire[]" ></td>
+            <td><input type="text" name="marchandise[]" placeholder="Nature"></td>
+            <td><input type="number" name="tonnage_manif[]" ></td>
+            <td><input type="number" name="tonnage_rest[]" ></td>
+            <td><input type="text" name="consignataire[]" ></td>
+            <td><input type="text" name="receptionnaire[]" ></td>
+            <td>
+                <select name="grue[]" >
+                    <option value="M630001">M630001</option>
+                    <option value="M630002">M630002</option>
+                    <option value="G400001">G400001</option>
+                    <option value="G400002">G400002</option>
+                    <option value="G400003">G400003</option>
+                    <option value="G400004">G400004</option>
+                    <option value="G400005">G400005</option>
+                    <option value="G400006">G400006</option>
+                    <option value="G380001">G380001</option>
+                    <option value="G380002">G380002</option>
+                    <option value="G380003">G380003</option>
+                    <option value="G380004">G380004</option>
+                </select>
+            </td>
+            <td>
+                <select name="elevateur[]" >
+                    <option value="Elv1">1</option>
+                    <option value="Elv2">2</option>
+                    <option value="Elv3">3</option>
+                </select>
+            </td>
+            <td>
+                <select name="materiel_a_bord[]" >
+                    <option value="ch11">1</option>
+                    <option value="ch2">2</option>
+                    <option value="Sd1">3</option>
+                </select>
+            </td>
+            <td><input type="date" name="Date_debut_travail[]" ></td>
+            <td><input type="date" name="Date_fin_travail[]" ></td>
+            <td><input type="text" name="Heure_Terminaison_Travail_Prévue[]" placeholder="Heure de terminaison" ></td>
+            <td><input type="text" name="observation[]" placeholder="Observation" ></td>
+        `;
+        tableBody.appendChild(newRow);
+    });
+</script>
+
 {% endblock %}

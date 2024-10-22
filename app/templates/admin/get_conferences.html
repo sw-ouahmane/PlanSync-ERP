@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference List</title>
+</head>
+
+<body>
+    <h1>List of Conferences</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>PM</th>
+                <th>Marchandise</th>
+                <th>Navire</th>
+                <th>Poste</th>
+                <th>Grue</th>
+                <th>Tonnage Manif</th>
+                <th>Tonnage Rest</th>
+                <th>Consignataire</th>
+                <th>Réceptionnaire</th>
+                <th>Elevateur</th>
+                <th>Materiel à Bord</th>
+                <th>Date Début Travail</th>
+                <th>Date Fin Travail</th>
+                <th>Heure Terminaison Travail Prévue</th>
+                <th>Observation</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conference in conferences %}
+            <tr>
+                <td>{{ conference.id }}</td>
+                <td>{{ conference.pm }}</td>
+                <td>{{ conference.marchandise }}</td>
+                <td>{{ conference.navire }}</td>
+                <td>{{ conference.poste }}</td>
+                <td>{{ conference.grue }}</td>
+                <td>{{ conference.tonnage_manif }}</td>
+                <td>{{ conference.tonnage_rest }}</td>
+                <td>{{ conference.consignataire }}</td>
+                <td>{{ conference.receptionnaire }}</td>
+                <td>{{ conference.elevateur }}</td>
+                <td>{{ conference.materiel_a_bord }}</td>
+                <td>{{ conference.Date_debut_travail }}</td>
+                <td>{{ conference.Date_fin_travail }}</td>
+                <td>{{ conference.Heure_Terminaison_Travail_Prévue }}</td>
+                <td>{{ conference.observation }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

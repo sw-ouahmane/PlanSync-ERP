@@ -1,26 +1,10 @@
 from flask_login import login_required
-from flask import render_template, request
-from flask import request, render_template
 from app.utils import get_active_sessions_count
-from app.models import User, Todo  # Adjust the import based on your app structure
-from flask import render_template, request, redirect, url_for
-from ..utils import create_default_admin
-from flask import Blueprint, jsonify
-from flask import send_file, Blueprint
-from openpyxl import load_workbook
-from flask import Blueprint, render_template
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
-from flask import send_file
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from flask import request, flash, redirect, url_for
-from app.models import db
-from app.models import Todo, User
-from flask import request, render_template, url_for
-from flask_login import current_user, login_required
-from flask import Flask, render_template, url_for, request, redirect, session, flash, jsonify
+from app.models import db, User, Todo
+from app.models import Conference
+from flask import render_template, url_for, request, redirect, session, flash,  url_for, flash, session, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from app.models import db, User, Todo
 import os
 import calendar
 import json
@@ -28,7 +12,6 @@ from datetime import datetime
 from flask import Blueprint
 from flask_login import login_required, current_user
 from flask import send_file
-from flask import Flask, render_template
 from collections import defaultdict
 
 
@@ -52,6 +35,8 @@ def admin():
 
     # Get search parameter
     prenom = request.args.get('prenom', '')
+    conferences = Conference.query.all()
+    print(f"Conferences fetched: {conferences}")  # Debugging line
 
     # Get current page and set tasks per page
     page = request.args.get('page', 1, type=int)
@@ -72,6 +57,7 @@ def admin():
                            pending_users=pending_users,
                            normal_users=normal_users,
                            admins=admins,
+                           conferences=conferences,
                            active_sessions=active_sessions,
                            tasks=tasks)
 
@@ -451,8 +437,168 @@ def statistiques_admin():
                            stats=zip(months, task_counts))
 
 
-@bp.route('/saisai_conference')
-@login_required
+@bp.route('/saisai_conference', methods=['GET', 'POST'])
 def saisai_conference():
+    if request.method == 'POST':
+        try:
+            # Retrieve form data for multiple lines
+            postes = request.form.getlist('poste[]')
+            pms = request.form.getlist('pm[]')
+            navires = request.form.getlist('navire[]')
+            marchandises = request.form.getlist('marchandise[]')
+            tonnages_manif = request.form.getlist('tonnage_manif[]')
+            tonnages_rest = request.form.getlist('tonnage_rest[]')
+            consignataires = request.form.getlist('consignataire[]')
+            receptionnaires = request.form.getlist('receptionnaire[]')
+            grues = request.form.getlist('grue[]')
+            elevateurs = request.form.getlist('elevateur[]')
+            materiels_a_bord = request.form.getlist('materiel_a_bord[]')
+            dates_debut_travail = request.form.getlist('Date_debut_travail[]')
+            dates_fin_travail = request.form.getlist('Date_fin_travail[]')
+            heures_terminaison_travail_prevues = request.form.getlist(
+                'Heure_Terminaison_Travail_Prévue[]')
+            observations = request.form.getlist('observation[]')
 
-    return render_template('admin/saisai_conference.html', user=User)
+            # Ensure we have consistent data lengths
+            num_conferences = len(postes)
+            if not all(len(lst) == num_conferences for lst in [pms, navires, marchandises, tonnages_manif, tonnages_rest, consignataires, receptionnaires, grues, elevateurs, materiels_a_bord, dates_debut_travail, dates_fin_travail, heures_terminaison_travail_prevues, observations]):
+                flash(
+                    'Inconsistent number of inputs for multiple conferences.', 'danger')
+                return redirect(url_for('admin.saisai_conference'))
+
+            # Loop through the number of conferences to create
+            for i in range(num_conferences):
+                # Parse the date and time fields correctly
+                Date_debut_travail = datetime.strptime(
+                    dates_debut_travail[i], '%Y-%m-%d').date()
+                Date_fin_travail = datetime.strptime(
+                    dates_fin_travail[i], '%Y-%m-%d').date()
+
+                Heure_Terminaison_Travail_Prévue = None
+                if heures_terminaison_travail_prevues[i]:
+                    try:
+                        Heure_Terminaison_Travail_Prévue = datetime.strptime(
+                            heures_terminaison_travail_prevues[i], '%H').time()
+                    except ValueError:
+                        flash(
+                            f'Invalid time format for Heure Terminaison in row {i + 1}.', 'danger')
+                        return redirect(url_for('admin.saisai_conference'))
+
+                # Create a new Conference object for each set of data
+                new_conference = Conference(
+                    poste=postes[i],
+                    pm=pms[i],
+                    navire=navires[i],
+                    marchandise=marchandises[i],
+                    tonnage_manif=tonnages_manif[i],
+                    tonnage_rest=tonnages_rest[i],
+                    consignataire=consignataires[i],
+                    receptionnaire=receptionnaires[i],
+                    grue=grues[i],
+                    elevateur=elevateurs[i],
+                    materiel_a_bord=materiels_a_bord[i],
+                    Date_debut_travail=Date_debut_travail,
+                    Date_fin_travail=Date_fin_travail,
+                    Heure_Terminaison_Travail_Prévue=Heure_Terminaison_Travail_Prévue,
+                    observation=observations[i]
+                )
+
+                # Save the conference to the database
+                db.session.add(new_conference)
+
+            # Commit the session after adding all conferences
+            db.session.commit()
+
+            flash(f'{num_conferences} Conferences added successfully!', 'success')
+            return redirect(url_for('admin.saisai_conference'))
+
+        except Exception as e:
+            # Handle exceptions with a flash message
+            flash(f'An error occurred: {e}', 'danger')
+            return redirect(url_for('admin.saisai_conference'))
+
+    # If it's a GET request, display the form
+    return render_template('admin/saisai_conference.html')
+
+
+@bp.route('/conference1', methods=['GET', 'POST'])
+def conference1():
+    # Get the conference_id from the request args
+    conference_id = request.args.get('conference_id')
+    print(f"Requested conference_id: {conference_id}")
+    conference = Conference.query.get(conference_id)
+
+    if not conference:
+        return 'Conference not found.', 404
+
+    if request.method == 'POST':
+        # Process form data for updating the conference
+        poste = request.form.get('poste')
+        pm = request.form.get('pm')
+        Navire = request.form.get('Navire')
+        Marchandise = request.form.get('Marchandise')
+        Tonnage_manif = request.form.get('Tonnage manif')
+        Tonnage_rest = request.form.get('Tonnage Rest')
+        Consignataire = request.form.get('Consignataire')
+        Receptionnaire = request.form.get('Réceptionnaire')
+        grue = request.form.get('grue')
+        elevateur = request.form.get('elevateur')
+        Materiel_a_bord = request.form.get('Materiel a bord')
+        Date_debut_travail = request.form.get('Date_debut_travail')
+        Date_fin_travail = request.form.get('Date_fin_travail')
+        Heure_terminaison_travail = request.form.get(
+            'Heure_Terminaison Travail Prévue')
+        observation = request.form.get('observation')
+
+        # Validate required fields
+        if not all([poste, pm, Navire, Tonnage_manif, Tonnage_rest, Consignataire, Receptionnaire, grue, elevateur, Materiel_a_bord, Date_debut_travail, Date_fin_travail, Heure_terminaison_travail, observation]):
+            return 'All fields are required.'
+
+        # Update the existing conference object with the new data
+        conference.poste = poste
+        conference.pm = pm
+        conference.Navire = Navire
+        conference.Marchandise = Marchandise
+        conference.Tonnage_manif = Tonnage_manif
+        conference.Tonnage_rest = Tonnage_rest
+        conference.Consignataire = Consignataire
+        conference.Receptionnaire = Receptionnaire
+        conference.grue = grue
+        conference.elevateur = elevateur
+        conference.Materiel_a_bord = Materiel_a_bord
+        conference.Date_debut_travail = Date_debut_travail
+        conference.Date_fin_travail = Date_fin_travail
+        conference.Heure_terminaison_travail = Heure_terminaison_travail
+        conference.observation = observation
+
+        try:
+            # Commit the changes to the database
+            db.session.commit()
+            return redirect(url_for('admin.conference1', conference_id=conference.id))
+        except Exception as e:
+            return f'There was an issue updating the conference: {e}'
+
+    # Render the template with the conference data for GET request
+    return render_template('admin/conference1.html', conference=conference)
+
+
+@bp.route('/all_conferences')
+@login_required
+def all_conferences():
+    # Query all conferences from the database
+    # Ensure you have the Conference model imported
+    conferences = Conference.query.all()
+    return render_template('admin/all_conferences.html', conferences=conferences)
+
+
+@bp.route('/delete_conference/<int:conference_id>', methods=['POST'])
+@login_required
+def delete_conference(conference_id):
+    conference = Conference.query.get(conference_id)
+    if conference:
+        db.session.delete(conference)
+        db.session.commit()
+        flash('Conference deleted successfully!', 'success')
+    else:
+        flash('Conference not found.', 'error')
+    return redirect(url_for('admin.all_conferences'))

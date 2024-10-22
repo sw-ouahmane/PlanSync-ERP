@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, time
 from flask_login import UserMixin
@@ -38,11 +39,7 @@ class User(db.Model, UserMixin):
         return str(self.id)
 
 
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    # Consider if this should be nullable
-    content = db.Column(db.String(200), nullable=True)
-    shift = db.Column(db.String(50))
+class CommonFieldsMixin:
     poste = db.Column(db.String(50))
     navire = db.Column(db.String(50))
     grue = db.Column(db.String(50))
@@ -53,32 +50,38 @@ class Todo(db.Model):
     comentaire = db.Column(db.String(50))
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Foreign key relationship to User model
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    # Track if the task is validated
+class Todo(db.Model):
+    __tablename__ = 'todo'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(200), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     is_validated = db.Column(db.Boolean, default=False)
-    # Name of the admin who validated it
     validated_by = db.Column(db.String(150), nullable=True)
-    # Track task status
     status = db.Column(db.String(50), default='pending')
     remark = db.Column(db.String(255), nullable=True)
     Escale = db.Column(db.String(15), nullable=True)  # Make nullable
-
     execution_time = db.Column(db.Float, nullable=True)
+
+    # Include common fields by inheritance
+    poste = CommonFieldsMixin.poste
+    navire = CommonFieldsMixin.navire
+    grue = CommonFieldsMixin.grue
+    marchandise = CommonFieldsMixin.marchandise
+    nb_cs_pcs = CommonFieldsMixin.nb_cs_pcs
+    unite = CommonFieldsMixin.unite
+    raclage = CommonFieldsMixin.raclage
+    comentaire = CommonFieldsMixin.comentaire
+    date_created = CommonFieldsMixin.date_created
 
     def __repr__(self):
         return f'<Task {self.id}>'
 
 
 class Conference(db.Model):
-    __tablename__ = 'conference'  # Specific table name for Conference
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    __tablename__ = 'conference'
+    id = db.Column(db.Integer, primary_key=True)
     pm = db.Column(db.String(50))
-    marchandise = db.Column(db.String(50))
-    navire = db.Column(db.String(50))
-    poste = db.Column(db.String(50))
-    grue = db.Column(db.String(50))
     tonnage_manif = db.Column(db.String(50))
     tonnage_rest = db.Column(db.String(50))
     consignataire = db.Column(db.String(50))
@@ -89,19 +92,17 @@ class Conference(db.Model):
     Date_fin_travail = db.Column(db.Date, default=datetime.utcnow().date)
     Heure_Terminaison_Travail_Prévue = db.Column(db.Time, nullable=True)
     observation = db.Column(db.String(255), nullable=True)
-    date_added = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Include common fields directly in Conference
+    poste = db.Column(db.String(50))
+    navire = db.Column(db.String(50))
+    grue = db.Column(db.String(50))
+    marchandise = db.Column(db.String(50))
+    nb_cs_pcs = db.Column(db.String(50))
+    unite = db.Column(db.String(50))
+    raclage = db.Column(db.String(50))
+    comentaire = db.Column(db.String(50))
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f'<Conference {self.id}, PM: {self.pm}>'
-
-
-class X(db.Model):
-    __tablename__ = 'x'
-
-    # Unique identifier for each row
-    id = db.Column(db.Integer, primary_key=True)
-    a = db.Column(db.String(50), nullable=False)   # Column 'a'
-    b = db.Column(db.String(50), nullable=False)   # Column 'b'
-
-    def __repr__(self):
-        return f"<X(id={self.id}, a='{self.a}', b='{self.b}')>"
