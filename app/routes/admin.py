@@ -602,3 +602,16 @@ def delete_conference(conference_id):
     else:
         flash('Conference not found.', 'error')
     return redirect(url_for('admin.all_conferences'))
+
+
+@bp.route('/get_file_path/<path:filename>', methods=['GET'])
+@login_required
+def get_file_path(filename):
+    # Construct the file path
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    # Check if the file exists
+    if os.path.exists(file_path):
+        return f'The absolute path for the uploaded file is: {file_path}'
+    else:
+        return 'File not found.', 404
