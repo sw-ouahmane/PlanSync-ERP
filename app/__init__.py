@@ -49,7 +49,7 @@ def create_app():
 
     # Create all tables in the database
     with app.app_context():
-        db.drop_all()
+        # db.drop_all()
         db.create_all()
         create_default_admin()
 
