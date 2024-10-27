@@ -4,55 +4,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conference List</title>
+    <title>Conference Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+        }
+
+        /* Add responsiveness for smaller screens */
+        @media (max-width: 600px) {
+            table {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h1>List of Conferences</h1>
-    <table border="1">
+
+    <h2>Conference Details</h2>
+    <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>PM</th>
-                <th>Marchandise</th>
-                <th>Navire</th>
-                <th>Poste</th>
-                <th>Grue</th>
-                <th>Tonnage Manif</th>
-                <th>Tonnage Rest</th>
-                <th>Consignataire</th>
-                <th>Réceptionnaire</th>
-                <th>Elevateur</th>
-                <th>Materiel à Bord</th>
-                <th>Date Début Travail</th>
-                <th>Date Fin Travail</th>
-                <th>Heure Terminaison Travail Prévue</th>
-                <th>Observation</th>
+                <th scope="col">Poste</th>
+                <th scope="col">PM</th>
+                <th scope="col">Navire</th>
+                <th scope="col">Marchandise</th>
+                <th scope="col">Grue</th>
+                <th scope="col">Tonnage Manif</th>
+                <th scope="col">Tonnage Rest</th>
+                <th scope="col">Consignataire</th>
+                <th scope="col">Réceptionnaire</th>
+                <th scope="col">Elevateur</th>
+                <th scope="col">Materiel à Bord</th>
+                <th scope="col">Date de Début Travail</th>
+                <th scope="col">Date de Fin Travail</th>
+                <th scope="col">Heure de Terminaison Travail Prévue</th>
+                <th scope="col">Observation</th>
             </tr>
         </thead>
         <tbody>
-            {% for conference in conferences %}
+            {% for detail in details %}
             <tr>
-                <td>{{ conference.id }}</td>
-                <td>{{ conference.pm }}</td>
-                <td>{{ conference.marchandise }}</td>
-                <td>{{ conference.navire }}</td>
-                <td>{{ conference.poste }}</td>
-                <td>{{ conference.grue }}</td>
-                <td>{{ conference.tonnage_manif }}</td>
-                <td>{{ conference.tonnage_rest }}</td>
-                <td>{{ conference.consignataire }}</td>
-                <td>{{ conference.receptionnaire }}</td>
-                <td>{{ conference.elevateur }}</td>
-                <td>{{ conference.materiel_a_bord }}</td>
-                <td>{{ conference.Date_debut_travail }}</td>
-                <td>{{ conference.Date_fin_travail }}</td>
-                <td>{{ conference.Heure_Terminaison_Travail_Prévue }}</td>
-                <td>{{ conference.observation }}</td>
+                <td>{{ detail.poste }}</td>
+                <td>{{ detail.pm }}</td>
+                <td>{{ detail.navire }}</td>
+                <td>{{ detail.marchandise }}</td>
+                <td>{{ detail.grue }}</td>
+                <td>{{ detail.tonnage_manif }}</td>
+                <td>{{ detail.tonnage_rest }}</td>
+                <td>{{ detail.consignataire }}</td>
+                <td>{{ detail.receptionnaire }}</td>
+                <td>{{ detail.elevateur }}</td>
+                <td>{{ detail.materiel_a_bord }}</td>
+                <td>{{ detail.Date_debut_travail }}</td>
+                <td>{{ detail.Date_fin_travail }}</td>
+                <td>{{ detail.Heure_Terminaison_Travail_Prévue }}</td>
+                <td>{{ detail.observation }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
 </body>
 
 </html>

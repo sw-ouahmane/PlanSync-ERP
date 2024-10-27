@@ -73,6 +73,7 @@ class Todo(db.Model):
 
 class Conference(db.Model):
     __tablename__ = 'conference'  # Specific table name for Conference
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pm = db.Column(db.String(50))
     marchandise = db.Column(db.String(50))
@@ -91,17 +92,38 @@ class Conference(db.Model):
     observation = db.Column(db.String(255), nullable=True)
     date_added = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    def __repr__(self):
-        return f'<Conference {self.id}, PM: {self.pm}>'
-
-
-class X(db.Model):
-    __tablename__ = 'x'
-
-    # Unique identifier for each row
-    id = db.Column(db.Integer, primary_key=True)
-    a = db.Column(db.String(50), nullable=False)   # Column 'a'
-    b = db.Column(db.String(50), nullable=False)   # Column 'b'
+    # Relationship to ConferenceDetail
+    details = db.relationship(
+        'ConferenceDetail', backref='conference', lazy='dynamic')
 
     def __repr__(self):
-        return f"<X(id={self.id}, a='{self.a}', b='{self.b}')>"
+        return f'<Conference {self.id}, poste: {self.poste}>'
+
+
+class ConferenceDetail(db.Model):
+    __tablename__ = 'conferenceDetails'  # Specific table name for ConferenceDetails
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    pm = db.Column(db.String(50))
+    marchandise = db.Column(db.String(50))
+    navire = db.Column(db.String(50))
+    poste = db.Column(db.String(50))
+    grue = db.Column(db.String(50))
+    tonnage_manif = db.Column(db.String(50))
+    tonnage_rest = db.Column(db.String(50))
+    consignataire = db.Column(db.String(50))
+    receptionnaire = db.Column(db.String(50))
+    elevateur = db.Column(db.String(50))
+    materiel_a_bord = db.Column(db.String(50))
+    Date_debut_travail = db.Column(db.Date, default=datetime.utcnow().date)
+    Date_fin_travail = db.Column(db.Date, default=datetime.utcnow().date)
+    Heure_Terminaison_Travail_Prévue = db.Column(db.Time, nullable=True)
+    observation = db.Column(db.String(255), nullable=True)
+    date_added = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Foreign key referencing the Conference table
+    conference_id = db.Column(db.Integer, db.ForeignKey(
+        'conference.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<ConferenceDetail {self.id}, poste: {self.poste}>'

@@ -1,7 +1,7 @@
 from flask_login import login_required
 from app.utils import get_active_sessions_count
 from app.models import db, User, Todo
-from app.models import Conference
+from app.models import Conference, ConferenceDetail
 from flask import render_template, url_for, request, redirect, session, flash,  url_for, flash, session, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -466,6 +466,9 @@ def saisai_conference():
                     'Inconsistent number of inputs for multiple conferences.', 'danger')
                 return redirect(url_for('admin.saisai_conference'))
 
+            # Create a new Conference object
+            new_conference = Conference()
+
             # Loop through the number of conferences to create
             for i in range(num_conferences):
                 # Parse the date and time fields correctly
@@ -484,17 +487,17 @@ def saisai_conference():
                             f'Invalid time format for Heure Terminaison in row {i + 1}.', 'danger')
                         return redirect(url_for('admin.saisai_conference'))
 
-                # Create a new Conference object for each set of data
-                new_conference = Conference(
-                    poste=postes[i],
+                # Create a new ConferenceDetail object for each set of data
+                new_conference_detail = ConferenceDetail(
                     pm=pms[i],
-                    navire=navires[i],
                     marchandise=marchandises[i],
+                    navire=navires[i],
+                    poste=postes[i],
+                    grue=grues[i],
                     tonnage_manif=tonnages_manif[i],
                     tonnage_rest=tonnages_rest[i],
                     consignataire=consignataires[i],
                     receptionnaire=receptionnaires[i],
-                    grue=grues[i],
                     elevateur=elevateurs[i],
                     materiel_a_bord=materiels_a_bord[i],
                     Date_debut_travail=Date_debut_travail,
@@ -503,10 +506,11 @@ def saisai_conference():
                     observation=observations[i]
                 )
 
-                # Save the conference to the database
-                db.session.add(new_conference)
+                # Associate the detail with the conference
+                new_conference.details.append(new_conference_detail)
 
-            # Commit the session after adding all conferences
+            # Save the conference with its details to the database
+            db.session.add(new_conference)
             db.session.commit()
 
             flash(f'{num_conferences} Conferences added successfully!', 'success')
@@ -521,65 +525,91 @@ def saisai_conference():
     return render_template('admin/saisai_conference.html')
 
 
-@bp.route('/conference1', methods=['GET', 'POST'])
-def conference1():
-    # Get the conference_id from the request args
-    conference_id = request.args.get('conference_id')
-    print(f"Requested conference_id: {conference_id}")
-    conference = Conference.query.get(conference_id)
+@bp.route('/conference1/<int:id>', methods=['GET', 'POST'])
+def conference1(id):
+    conferencee = Conference.query.get(id)
 
-    if not conference:
+    if not conferencee:
         return 'Conference not found.', 404
 
     if request.method == 'POST':
         # Process form data for updating the conference
-        poste = request.form.get('poste')
-        pm = request.form.get('pm')
-        Navire = request.form.get('Navire')
-        Marchandise = request.form.get('Marchandise')
-        Tonnage_manif = request.form.get('Tonnage manif')
-        Tonnage_rest = request.form.get('Tonnage Rest')
-        Consignataire = request.form.get('Consignataire')
-        Receptionnaire = request.form.get('Réceptionnaire')
-        grue = request.form.get('grue')
-        elevateur = request.form.get('elevateur')
-        Materiel_a_bord = request.form.get('Materiel a bord')
-        Date_debut_travail = request.form.get('Date_debut_travail')
-        Date_fin_travail = request.form.get('Date_fin_travail')
-        Heure_terminaison_travail = request.form.get(
-            'Heure_Terminaison Travail Prévue')
-        observation = request.form.get('observation')
+        poste = request.form.getlist('poste[]')
+        pm = request.form.getlist('pm[]')
+        navire = request.form.getlist('navire[]')
+        marchandise = request.form.getlist('marchandise[]')
+        tonnage_manif = request.form.getlist('tonnage_manif[]')
+        tonnage_rest = request.form.getlist('tonnage_rest[]')
+        consignataire = request.form.getlist('consignataire[]')
+        receptionnaire = request.form.getlist('receptionnaire[]')
+        grue = request.form.getlist('grue[]')
+        elevateur = request.form.getlist('elevateur[]')
+        materiel_a_bord = request.form.getlist('materiel_a_bord[]')
+        date_debut_travail = request.form.getlist('Date_debut_travail[]')
+        date_fin_travail = request.form.getlist('Date_fin_travail[]')
+        heure_terminaison_travail = request.form.getlist(
+            'Heure_Terminaison_Travail_Prévue[]')
+        observation = request.form.getlist('observation[]')
 
         # Validate required fields
-        if not all([poste, pm, Navire, Tonnage_manif, Tonnage_rest, Consignataire, Receptionnaire, grue, elevateur, Materiel_a_bord, Date_debut_travail, Date_fin_travail, Heure_terminaison_travail, observation]):
-            return 'All fields are required.'
+        if not all([poste, pm, navire, tonnage_manif, tonnage_rest, consignataire, receptionnaire, grue, elevateur, materiel_a_bord, date_debut_travail, date_fin_travail, heure_terminaison_travail, observation]):
+            flash('All fields are required.', 'error')
+            return redirect(request.url)
 
         # Update the existing conference object with the new data
-        conference.poste = poste
-        conference.pm = pm
-        conference.Navire = Navire
-        conference.Marchandise = Marchandise
-        conference.Tonnage_manif = Tonnage_manif
-        conference.Tonnage_rest = Tonnage_rest
-        conference.Consignataire = Consignataire
-        conference.Receptionnaire = Receptionnaire
-        conference.grue = grue
-        conference.elevateur = elevateur
-        conference.Materiel_a_bord = Materiel_a_bord
-        conference.Date_debut_travail = Date_debut_travail
-        conference.Date_fin_travail = Date_fin_travail
-        conference.Heure_terminaison_travail = Heure_terminaison_travail
-        conference.observation = observation
+        conferencee.pm = pm[0]
+        conferencee.navire = navire[0]
+        conferencee.marchandise = marchandise[0]
+        conferencee.tonnage_manif = tonnage_manif[0]
+        conferencee.tonnage_rest = tonnage_rest[0]
+        conferencee.consignataire = consignataire[0]
+        conferencee.receptionnaire = receptionnaire[0]
+        conferencee.grue = grue[0]
+        conferencee.elevateur = elevateur[0]
+        conferencee.materiel_a_bord = materiel_a_bord[0]
+        conferencee.Date_debut_travail = datetime.strptime(
+            date_debut_travail[0], '%Y-%m-%d')
+        conferencee.Date_fin_travail = datetime.strptime(
+            date_fin_travail[0], '%Y-%m-%d')
+        conferencee.Heure_Terminaison_Travail_Prévue = datetime.strptime(
+            heure_terminaison_travail[0], '%H:%M').time() if heure_terminaison_travail else None
+        conferencee.observation = observation[0]
+
+        # Update the details for each ConferenceDetail
+        for detail_id, post in zip(request.form.getlist('detail_id[]'), poste):
+            detail = ConferenceDetail.query.get(detail_id)
+            if detail:
+                detail.poste = post
+                detail.pm = pm[0]
+                detail.navire = navire[0]
+                detail.marchandise = marchandise[0]
+                detail.tonnage_manif = tonnage_manif[0]
+                detail.tonnage_rest = tonnage_rest[0]
+                detail.consignataire = consignataire[0]
+                detail.receptionnaire = receptionnaire[0]
+                detail.grue = grue[0]
+                detail.elevateur = elevateur[0]
+                detail.materiel_a_bord = materiel_a_bord[0]
+                detail.Date_debut_travail = datetime.strptime(
+                    date_debut_travail[0], '%Y-%m-%d')
+                detail.Date_fin_travail = datetime.strptime(
+                    date_fin_travail[0], '%Y-%m-%d')
+                detail.Heure_Terminaison_Travail_Prévue = datetime.strptime(
+                    heure_terminaison_travail[0], '%H:%M').time() if heure_terminaison_travail else None
+                detail.observation = observation[0]
 
         try:
-            # Commit the changes to the database
             db.session.commit()
-            return redirect(url_for('admin.conference1', conference_id=conference.id))
+            flash('Conference updated successfully!', 'success')
+            return redirect(url_for('admin.conference1', id=conferencee.id))
         except Exception as e:
-            return f'There was an issue updating the conference: {e}'
+            flash(f'There was an issue updating the conference: {e}', 'error')
+            return redirect(request.url)
 
-    # Render the template with the conference data for GET request
-    return render_template('admin/conference1.html', conference=conference)
+    # Get ConferenceDetails for the conference
+    details = conferencee.details.all()  # Fetch all details for the conference
+
+    return render_template('admin/get_conferences.html', conferencee=conferencee, details=details)
 
 
 @bp.route('/all_conferences')
@@ -591,10 +621,10 @@ def all_conferences():
     return render_template('admin/all_conferences.html', conferences=conferences)
 
 
-@bp.route('/delete_conference/<int:conference_id>', methods=['POST'])
+@bp.route('/delete_conference/<int:id>', methods=['POST'])
 @login_required
-def delete_conference(conference_id):
-    conference = Conference.query.get(conference_id)
+def delete_conference(id):
+    conference = Conference.query.get(id)
     if conference:
         db.session.delete(conference)
         db.session.commit()
