@@ -444,6 +444,8 @@ def saisai_conference():
             # Retrieve form data for multiple lines
             postes = request.form.getlist('poste[]')
             pms = request.form.getlist('pm[]')
+            shifts = request.form.getlist('shift[]')
+            dates = request.form.getlist('Date[]')
             navires = request.form.getlist('navire[]')
             marchandises = request.form.getlist('marchandise[]')
             tonnages_manif = request.form.getlist('tonnage_manif[]')
@@ -461,7 +463,13 @@ def saisai_conference():
 
             # Ensure we have consistent data lengths
             num_conferences = len(postes)
-            if not all(len(lst) == num_conferences for lst in [pms, navires, marchandises, tonnages_manif, tonnages_rest, consignataires, receptionnaires, grues, elevateurs, materiels_a_bord, dates_debut_travail, dates_fin_travail, heures_terminaison_travail_prevues, observations]):
+            if not all(len(lst) == num_conferences for lst in [
+                pms, shifts, dates, navires, marchandises, tonnages_manif,
+                tonnages_rest, consignataires, receptionnaires, grues,
+                elevateurs, materiels_a_bord, dates_debut_travail,
+                dates_fin_travail, heures_terminaison_travail_prevues,
+                observations
+            ]):
                 flash(
                     'Inconsistent number of inputs for multiple conferences.', 'danger')
                 return redirect(url_for('admin.saisai_conference'))
@@ -471,27 +479,31 @@ def saisai_conference():
 
             # Loop through the number of conferences to create
             for i in range(num_conferences):
-                # Parse the date and time fields correctly
+                # Parse date fields correctly
+                date_entered = datetime.strptime(dates[i], '%Y-%m-%d').date()
                 Date_debut_travail = datetime.strptime(
                     dates_debut_travail[i], '%Y-%m-%d').date()
                 Date_fin_travail = datetime.strptime(
                     dates_fin_travail[i], '%Y-%m-%d').date()
 
+                # Parse time if provided
                 Heure_Terminaison_Travail_Prévue = None
                 if heures_terminaison_travail_prevues[i]:
                     try:
                         Heure_Terminaison_Travail_Prévue = datetime.strptime(
-                            heures_terminaison_travail_prevues[i], '%H').time()
+                            heures_terminaison_travail_prevues[i], '%H:%M').time()
                     except ValueError:
                         flash(
                             f'Invalid time format for Heure Terminaison in row {i + 1}.', 'danger')
                         return redirect(url_for('admin.saisai_conference'))
 
-                # Create a new ConferenceDetail object for each set of data
+                # Create a new ConferenceDetail object
                 new_conference_detail = ConferenceDetail(
                     pm=pms[i],
                     marchandise=marchandises[i],
                     navire=navires[i],
+                    Date=date_entered,
+                    shift=shifts[i],
                     poste=postes[i],
                     grue=grues[i],
                     tonnage_manif=tonnages_manif[i],
@@ -517,7 +529,7 @@ def saisai_conference():
             return redirect(url_for('admin.saisai_conference'))
 
         except Exception as e:
-            # Handle exceptions with a flash message
+            # Log the full exception for debugging
             flash(f'An error occurred: {e}', 'danger')
             return redirect(url_for('admin.saisai_conference'))
 
@@ -536,6 +548,8 @@ def conference1(id):
         # Process form data for updating the conference
         poste = request.form.getlist('poste[]')
         pm = request.form.getlist('pm[]')
+        shift = request.form.getlist('shift[]')
+        date = request.form.getlist('Date[]')
         navire = request.form.getlist('navire[]')
         marchandise = request.form.getlist('marchandise[]')
         tonnage_manif = request.form.getlist('tonnage_manif[]')
@@ -552,12 +566,14 @@ def conference1(id):
         observation = request.form.getlist('observation[]')
 
         # Validate required fields
-        if not all([poste, pm, navire, tonnage_manif, tonnage_rest, consignataire, receptionnaire, grue, elevateur, materiel_a_bord, date_debut_travail, date_fin_travail, heure_terminaison_travail, observation]):
+        if not all([poste, pm, navire, tonnage_manif, shift, date, tonnage_rest, consignataire, receptionnaire, grue, elevateur, materiel_a_bord, date_debut_travail, date_fin_travail, heure_terminaison_travail, observation]):
             flash('All fields are required.', 'error')
             return redirect(request.url)
 
         # Update the existing conference object with the new data
         conferencee.pm = pm[0]
+        conferencee.shift = shift[0]
+        conferencee.Date = date
         conferencee.navire = navire[0]
         conferencee.marchandise = marchandise[0]
         conferencee.tonnage_manif = tonnage_manif[0]
@@ -579,6 +595,8 @@ def conference1(id):
         for detail_id, post in zip(request.form.getlist('detail_id[]'), poste):
             detail = ConferenceDetail.query.get(detail_id)
             if detail:
+                detail.shift = shift[0]
+                detail.date = date
                 detail.poste = post
                 detail.pm = pm[0]
                 detail.navire = navire[0]
@@ -626,11 +644,13 @@ def all_conferences():
 def delete_conference(id):
     conference = Conference.query.get(id)
     if conference:
+        # Delete related ConferenceDetail entries
+        ConferenceDetail.query.filter_by(conference_id=id).delete()
+
+        # Now delete the Conference
         db.session.delete(conference)
         db.session.commit()
-        flash('Conference deleted successfully!', 'success')
-    else:
-        flash('Conference not found.', 'error')
+
     return redirect(url_for('admin.all_conferences'))
 
 

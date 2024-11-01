@@ -75,6 +75,8 @@ class Conference(db.Model):
     __tablename__ = 'conference'  # Specific table name for Conference
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Date = db.Column(db.Date, default=datetime.utcnow().date)
+    shift = db.Column(db.String(50), nullable=True)
     pm = db.Column(db.String(50))
     marchandise = db.Column(db.String(50))
     navire = db.Column(db.String(50))
@@ -104,6 +106,8 @@ class ConferenceDetail(db.Model):
     __tablename__ = 'conferenceDetails'  # Specific table name for ConferenceDetails
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Date = db.Column(db.Date, default=datetime.utcnow().date)
+    shift = db.Column(db.String(50), nullable=True)
     pm = db.Column(db.String(50))
     marchandise = db.Column(db.String(50))
     navire = db.Column(db.String(50))

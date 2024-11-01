@@ -65,8 +65,11 @@
 </head>
 
 <body>
-
     <h2>Conference Details</h2>
+
+    <p>Date: {{ conferencee.Date.strftime('%d-%m-%Y ') }}</p>
+    <p>Shift: {{ details[0].shift if details else 'No shift available' }}</p>
+
     <table>
         <thead>
             <tr>
@@ -74,11 +77,11 @@
                 <th scope="col">PM</th>
                 <th scope="col">Navire</th>
                 <th scope="col">Marchandise</th>
-                <th scope="col">Grue</th>
                 <th scope="col">Tonnage Manif</th>
                 <th scope="col">Tonnage Rest</th>
                 <th scope="col">Consignataire</th>
                 <th scope="col">Réceptionnaire</th>
+                <th scope="col">Grue</th>
                 <th scope="col">Elevateur</th>
                 <th scope="col">Materiel à Bord</th>
                 <th scope="col">Date de Début Travail</th>
@@ -94,11 +97,11 @@
                 <td>{{ detail.pm }}</td>
                 <td>{{ detail.navire }}</td>
                 <td>{{ detail.marchandise }}</td>
-                <td>{{ detail.grue }}</td>
                 <td>{{ detail.tonnage_manif }}</td>
                 <td>{{ detail.tonnage_rest }}</td>
                 <td>{{ detail.consignataire }}</td>
                 <td>{{ detail.receptionnaire }}</td>
+                <td>{{ detail.grue }}</td>
                 <td>{{ detail.elevateur }}</td>
                 <td>{{ detail.materiel_a_bord }}</td>
                 <td>{{ detail.Date_debut_travail }}</td>
