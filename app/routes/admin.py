@@ -654,6 +654,103 @@ def delete_conference(id):
     return redirect(url_for('admin.all_conferences'))
 
 
+@bp.route('/edit_conference/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_conference(id):
+    # Retrieve the conference to edit
+    conference = Conference.query.get(id)
+
+    if not conference:
+        flash('Conference not found.', 'error')
+        return redirect(url_for('admin.all_conferences'))
+
+    # Handle form submission
+    if request.method == 'POST':
+        # Retrieve form data
+        poste = request.form.getlist('poste[]')
+        pm = request.form.getlist('pm[]')
+        shift = request.form.getlist('shift[]')
+        date = request.form.getlist('Date[]')
+        navire = request.form.getlist('navire[]')
+        marchandise = request.form.getlist('marchandise[]')
+        tonnage_manif = request.form.getlist('tonnage_manif[]')
+        tonnage_rest = request.form.getlist('tonnage_rest[]')
+        consignataire = request.form.getlist('consignataire[]')
+        receptionnaire = request.form.getlist('receptionnaire[]')
+        grue = request.form.getlist('grue[]')
+        elevateur = request.form.getlist('elevateur[]')
+        materiel_a_bord = request.form.getlist('materiel_a_bord[]')
+        date_debut_travail = request.form.getlist('Date_debut_travail[]')
+        date_fin_travail = request.form.getlist('Date_fin_travail[]')
+        heure_terminaison_travail = request.form.getlist(
+            'Heure_Terminaison_Travail_Prévue[]')
+        observation = request.form.getlist('observation[]')
+
+        # Check for required fields before accessing the first element
+        if not poste or not pm or not navire or not tonnage_manif or not shift or not date or not tonnage_rest or not consignataire or not receptionnaire or not grue or not elevateur or not materiel_a_bord or not date_debut_travail or not date_fin_travail or not heure_terminaison_travail or not observation:
+            flash('All fields are required.', 'error')
+            return redirect(request.url)
+
+        # Update the conference object with the new data
+        conference.pm = pm[0] if pm else None
+        conference.shift = shift[0] if shift else None
+        conference.Date = date[0] if date else None
+        conference.navire = navire[0] if navire else None
+        conference.marchandise = marchandise[0] if marchandise else None
+        conference.tonnage_manif = tonnage_manif[0] if tonnage_manif else None
+        conference.tonnage_rest = tonnage_rest[0] if tonnage_rest else None
+        conference.consignataire = consignataire[0] if consignataire else None
+        conference.receptionnaire = receptionnaire[0] if receptionnaire else None
+        conference.grue = grue[0] if grue else None
+        conference.elevateur = elevateur[0] if elevateur else None
+        conference.materiel_a_bord = materiel_a_bord[0] if materiel_a_bord else None
+        conference.Date_debut_travail = datetime.strptime(
+            date_debut_travail[0], '%Y-%m-%d') if date_debut_travail else None
+        conference.Date_fin_travail = datetime.strptime(
+            date_fin_travail[0], '%Y-%m-%d') if date_fin_travail else None
+        conference.Heure_Terminaison_Travail_Prévue = datetime.strptime(
+            heure_terminaison_travail[0], '%H:%M').time() if heure_terminaison_travail else None
+        conference.observation = observation[0] if observation else None
+
+        # Update the details for each ConferenceDetail
+        for detail_id, post in zip(request.form.getlist('detail_id[]'), poste):
+            detail = ConferenceDetail.query.get(detail_id)
+            if detail:
+                detail.shift = shift[0] if shift else None
+                detail.date = date[0] if date else None
+                detail.poste = post
+                detail.pm = pm[0] if pm else None
+                detail.navire = navire[0] if navire else None
+                detail.marchandise = marchandise[0] if marchandise else None
+                detail.tonnage_manif = tonnage_manif[0] if tonnage_manif else None
+                detail.tonnage_rest = tonnage_rest[0] if tonnage_rest else None
+                detail.consignataire = consignataire[0] if consignataire else None
+                detail.receptionnaire = receptionnaire[0] if receptionnaire else None
+                detail.grue = grue[0] if grue else None
+                detail.elevateur = elevateur[0] if elevateur else None
+                detail.materiel_a_bord = materiel_a_bord[0] if materiel_a_bord else None
+                detail.Date_debut_travail = datetime.strptime(
+                    date_debut_travail[0], '%Y-%m-%d') if date_debut_travail else None
+                detail.Date_fin_travail = datetime.strptime(
+                    date_fin_travail[0], '%Y-%m-%d') if date_fin_travail else None
+                detail.Heure_Terminaison_Travail_Prévue = datetime.strptime(
+                    heure_terminaison_travail[0], '%H:%M').time() if heure_terminaison_travail else None
+                detail.observation = observation[0] if observation else None
+
+        try:
+            db.session.commit()
+            flash('Conference updated successfully!', 'success')
+            return redirect(url_for('admin.all_conferences'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'There was an issue updating the conference: {e}', 'error')
+            return redirect(request.url)
+
+    # For GET requests, retrieve details and render the edit form
+    details = conference.details.all()
+    return render_template('admin/edit_conference.html', conference=conference, details=details)
+
+
 @bp.route('/get_file_path/<path:filename>', methods=['GET'])
 @login_required
 def get_file_path(filename):
