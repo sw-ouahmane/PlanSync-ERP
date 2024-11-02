@@ -334,9 +334,9 @@ def open_file(filename):
         return redirect(url_for('admin.load_conference'))
 
 
-@bp.route('/conference', methods=['GET'])
+@bp.route('/conference_file', methods=['GET'])
 @login_required
-def conference():
+def conference_file():
     # Get the list of uploaded files from the session
     uploaded_files = session.get('uploaded_files', [])
     if not uploaded_files:
